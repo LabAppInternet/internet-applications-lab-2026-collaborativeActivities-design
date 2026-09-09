@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo \"exit: $?\")",
+      "Bash(/usr/libexec/java_home -V)",
+      "Bash(/usr/libexec/java_home -v 21)",
+      "Bash(export JAVA_HOME=/Users/josep/Library/Java/JavaVirtualMachines/temurin-21.0.5/Contents/Home)",
+      "Bash(rm -rf __TRACKED_VAR__/nplusone_Students/target __TRACKED_VAR__/nplusone_Solution/target __TRACKED_VAR__/target)",
+      "Bash(echo \"=== existing project left pristine? \\(no target\\) ===\")",
+      "Bash(ls __TRACKED_VAR__/target)",
+      "Bash(echo \"target STILL present\")"
+    ]
+  }
+}

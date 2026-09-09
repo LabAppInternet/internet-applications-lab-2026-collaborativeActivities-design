@@ -1,0 +1,676 @@
+<title>Modelo de Aforo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --ground:#F6F3F5; --surface:#FFFFFF; --surface-2:#EFEAEE; --sunk:#EBE5EA;
+  --ink:#1C1620; --ink-2:#4C4353; --ink-3:#7C7385;
+  --rule:#DED6DD; --rule-strong:#C3B8C3;
+  --accent:#8E1F45; --accent-2:#B8305C; --accent-soft:#F7E8EE;
+  --free:#276F53; --free-soft:#E4F0EA;
+  --held:#9E650D; --held-soft:#F7EEDC;
+  --sold:#7F3636; --sold-soft:#F5E5E5;
+  --slate:#3F4A63; --slate-soft:#E7EAF1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#151119; --surface:#1E1922; --surface-2:#282230; --sunk:#120E16;
+    --ink:#F0EAF1; --ink-2:#BEB3C1; --ink-3:#8D8397;
+    --rule:#332B3A; --rule-strong:#4C4255;
+    --accent:#E87BA1; --accent-2:#F2A0BD; --accent-soft:#37202B;
+    --free:#63C79B; --free-soft:#1B2E26;
+    --held:#DFA84B; --held-soft:#312716;
+    --sold:#E08585; --sold-soft:#33201F;
+    --slate:#9AA8C7; --slate-soft:#22283A;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#151119; --surface:#1E1922; --surface-2:#282230; --sunk:#120E16;
+  --ink:#F0EAF1; --ink-2:#BEB3C1; --ink-3:#8D8397;
+  --rule:#332B3A; --rule-strong:#4C4255;
+  --accent:#E87BA1; --accent-2:#F2A0BD; --accent-soft:#37202B;
+  --free:#63C79B; --free-soft:#1B2E26;
+  --held:#DFA84B; --held-soft:#312716;
+  --sold:#E08585; --sold-soft:#33201F;
+  --slate:#9AA8C7; --slate-soft:#22283A;
+}
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:16px; line-height:1.62; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 24px}
+p{margin:0} .prose{max-width:66ch}
+h1,h2,h3,h4{margin:0; text-wrap:balance}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.855em; background:var(--surface-2); color:var(--ink); padding:.1em .34em; border-radius:2px; word-break:break-word}
+a{color:var(--accent); text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--accent-2); outline-offset:3px}
+
+.marquee{background:var(--sunk); border-bottom:1px solid var(--rule); padding:52px 0 0}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3)}
+h1{font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:800;
+  font-size:clamp(60px,11vw,124px); line-height:.82; margin:14px 0 0}
+.tagline{font-size:clamp(18px,2.2vw,23px); line-height:1.34; color:var(--ink-2); max-width:34ch; margin-top:20px}
+.tagline b{color:var(--ink); font-weight:600}
+.stubrow{display:flex; flex-wrap:wrap; margin-top:34px; border-top:1px solid var(--rule); border-bottom:1px dashed var(--rule-strong)}
+.stub{flex:1 1 140px; padding:14px 18px 15px; border-right:1px solid var(--rule)}
+.stub:last-child{border-right:0}
+.stub .k{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); display:block}
+.stub .v{font-family:"Big Shoulders Display",sans-serif; font-weight:700; font-size:26px; line-height:1.1; margin-top:3px}
+.stub .v small{font-family:"IBM Plex Sans",sans-serif; font-size:12px; font-weight:500; color:var(--ink-2)}
+
+section{padding:58px 0 4px}
+.sechead{display:flex; align-items:baseline; gap:14px; margin-bottom:8px; flex-wrap:wrap}
+.sechead .tag{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); font-weight:600}
+h2{font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:700;
+  font-size:clamp(36px,5vw,50px); line-height:.98}
+h3.sub{font-family:"IBM Plex Sans",sans-serif; font-size:19px; font-weight:600; margin:34px 0 6px}
+.lede{color:var(--ink-2); margin-top:14px; margin-bottom:28px}
+hr.rule{border:0; border-top:1px solid var(--rule); margin:0}
+
+/* lienzo claro fijo para los diagramas, legible en ambos temas */
+.canvas{background:#FFFFFF; border:1px solid var(--rule-strong); border-radius:4px;
+  padding:22px 18px; overflow-x:auto; margin-top:14px}
+.canvas .mermaid{min-width:0}
+.canvas .mermaid svg{max-width:100%; height:auto; display:block; margin:0 auto}
+.capt{font-size:13.5px; color:var(--ink-3); margin-top:9px; font-style:italic}
+
+.decision{display:grid; grid-template-columns:34px 1fr; gap:0 15px; align-items:start;
+  border:1px solid var(--rule); border-bottom:0; background:var(--surface); padding:15px 18px}
+.decision:last-of-type{border-bottom:1px solid var(--rule)}
+.decision .n{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; color:var(--accent);
+  border:1px solid var(--rule-strong); border-radius:50%; width:26px; height:26px;
+  display:flex; align-items:center; justify-content:center; margin-top:2px}
+.decision b{font-size:15.5px; font-weight:600; display:block; margin-bottom:3px}
+.decision span{font-size:14.5px; color:var(--ink-2)}
+
+.tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:3px; background:var(--surface); margin-top:16px}
+table{border-collapse:collapse; width:100%; min-width:760px; font-size:14.5px}
+th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--rule); vertical-align:top}
+thead th{background:var(--surface-2); font-family:"IBM Plex Mono",monospace; font-size:10px;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td.inv{font-weight:600; color:var(--ink); min-width:190px}
+td.mono{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--accent); line-height:1.65}
+td.uc{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); white-space:nowrap}
+td.ev{color:var(--ink-2)}
+
+.callout{background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--accent);
+  border-radius:0 3px 3px 0; padding:17px 20px 19px; margin:24px 0}
+.callout .h{font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--accent); margin-bottom:7px}
+.callout p{font-size:15px; color:var(--ink-2)} .callout p+p{margin-top:9px}
+.callout b{color:var(--ink); font-weight:600}
+footer{border-top:1px solid var(--rule); margin-top:60px; padding:26px 0 46px}
+footer p{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3)}
+</style>
+
+<div class="marquee">
+  <div class="wrap">
+    <div class="eyebrow">Documento de trabajo del equipo docente &middot; modelo de referencia</div>
+    <h1>Modelo de Aforo</h1>
+    <p class="tagline">Modelo de dominio y esquema relacional que <b>sostiene los 39 casos de uso</b>, con las restricciones que garantizan cada invariante.</p>
+    <div class="stubrow">
+      <div class="stub"><span class="k">Agregados</span><div class="v">8 <small>raíces</small></div></div>
+      <div class="stub"><span class="k">Tablas</span><div class="v">14 <small>en el núcleo · 19 con Extensión</small></div></div>
+      <div class="stub"><span class="k">Invariantes</span><div class="v">10 <small>con garantía explícita</small></div></div>
+      <div class="stub"><span class="k">Complemento de</span><div class="v">Aforo <small>catálogo de casos de uso</small></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<section>
+  <div class="sechead"><span class="tag">Cómo leerlo</span></div>
+  <h2>Cinco decisiones explican todo el modelo</h2>
+  <p class="lede prose">El modelo no se entiende recorriendo las tablas una por una, sino conociendo las cinco decisiones que lo determinan. Cuatro de ellas son consecuencia directa de la concurrencia; la quinta es de diseño de dominio. Todas se pueden discutir, y de hecho conviene discutirlas antes de impartir la asignatura.</p>
+  <div class="decision">
+    <div class="n">1</div>
+    <div><b><code>InventarioButaca</code> es un agregado propio, no una colección dentro de <code>Funcion</code>.</b><span>Es la decisión que sostiene el proyecto entero. La fila más disputada del sistema es también la unidad transaccional más pequeña posible: una sola fila, que se actualiza con una sola sentencia condicional. Si el inventario colgara de <code>Funcion</code> como <code>@OneToMany</code>, vender una butaca exigiría cargar 20.000 filas y bloquear la función completa. Es la tensión entre dominio rico y JPA, resuelta a favor de agregados pequeños (UC-07, UC-14).</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">2</div>
+    <div><b>Las referencias entre agregados son por identificador, no por objeto.</b><span><code>Pedido</code> guarda un <code>funcion_id</code>, no una <code>Funcion</code>. Cada travesía de frontera es una consulta explícita y deliberada, no una carga perezosa accidental. Es lo que impide que una operación de negocio arrastre medio sistema a memoria.</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">3</div>
+    <div><b><code>CuotaClienteFuncion</code> existe solo para hacer verificable una invariante.</b><span>«Máximo seis entradas por persona y función» cruza <code>Pedido</code> y <code>Retencion</code>, y por tanto ningún agregado puede garantizarla solo. Se materializa una fila que se pueda bloquear. Es un agregado que <b>no viene del dominio sino de una necesidad de consistencia</b>, y merece explicarse como tal: es un ejemplo real de cómo la concurrencia deforma el modelo (UC-15).</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">4</div>
+    <div><b><code>Retencion</code> y <code>Pedido</code> son agregados separados.</b><span>La mayoría de retenciones muere sin convertirse en pedido. Unirlas obligaría a crear pedidos fantasma y a limpiarlos después. Separadas, la expiración es una operación local sobre <code>Retencion</code> que no toca la venta (UC-17).</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">5</div>
+    <div><b><code>Dinero</code> y <code>DesglosePrecio</code> son objetos de valor inmutables, y el desglose se congela.</b><span>El pedido guarda el resultado del cálculo, no la fórmula ni una referencia a la tarifa vigente. Una subida de gastos de gestión mañana no puede alterar una factura de ayer, y eso es un requisito, no una optimización (UC-08).</span></div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Simplificación</span></div>
+  <h2>Por qué el esquema tiene 14 tablas y no 27</h2>
+  <p class="lede prose">La primera versión de este modelo tenía 27 tablas, y para un proyecto de nueve sesiones eso es desproporcionado. Se revisó tabla por tabla con un criterio único: <b>una tabla propia solo se justifica si aloja lógica propia o si su existencia es en sí misma la lección</b>. Todo lo demás se absorbe en la entidad de la que depende. El resultado es <b>14 tablas de núcleo y 5 adicionales de Extensión</b>, sin perder ni un resultado de aprendizaje.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Se elimina</th><th>Pasa a ser</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <tr><td class="inv"><code>retencion_butaca</code></td><td class="ev">Columna <code>retencion_id</code> anulable en <code>inventario_butaca</code></td><td class="ev"><b>Es una mejora, no solo un ahorro.</b> La invariante «una butaca la retiene como mucho una parte» deja de depender de un índice único parcial y queda garantizada por la forma de la columna, porque una columna solo admite un valor. Y UC-14 se simplifica: una fila, un bloqueo, un <code>UPDATE</code>.</td></tr>
+        <tr><td class="inv"><code>cupo_general</code></td><td class="ev">Columnas <code>aforo_total</code> y <code>aforo_reservado</code> en <code>funcion</code></td><td class="ev">Una función tiene como mucho un cupo de admisión general. El contador atómico de UC-16 funciona igual sobre una columna que sobre una tabla, y la lección —el predicado dentro del <code>UPDATE</code>— es idéntica.</td></tr>
+        <tr><td class="inv"><code>clave_idempotencia</code></td><td class="ev">Columna <code>clave_idempotencia</code> con restricción única en <code>pedido</code></td><td class="ev">La restricción protege la creación del pedido igual de bien, y el reintento se resuelve leyendo el pedido existente y reconstruyendo la respuesta. Se pierde poder devolver el cuerpo original byte a byte; se gana una tabla menos y un mecanismo más fácil de explicar.</td></tr>
+        <tr><td class="inv"><code>pago</code></td><td class="ev">Tres columnas en <code>pedido</code>: referencia del proveedor, estado e intentos</td><td class="ev">La relación era cero-o-uno. Una tabla aparte solo se gana su sitio si hay que conservar el histórico de varios intentos, y ningún caso de uso lo pide.</td></tr>
+        <tr><td class="inv"><code>zona</code></td><td class="ev">Columna <code>zona</code> en <code>butaca</code></td><td class="ev">El conjunto de zonas de un recinto es pequeño y estable. La invariante de cobertura de precios se sigue verificando con la misma consulta de agregación.</td></tr>
+        <tr><td class="inv"><code>rol_cuenta</code></td><td class="ev">Columna <code>rol</code> en <code>cuenta</code></td><td class="ev">En este dominio una cuenta tiene exactamente un rol: quien asiste a un concierto no es además personal de puerta.</td></tr>
+        <tr><td class="inv"><code>promotor</code></td><td class="ev">Columna <code>nombre_comercial</code> anulable en <code>cuenta</code></td><td class="ev">Un promotor es una cuenta con rol de promotor y un nombre comercial. La autorización por propiedad de UC-09 sigue funcionando igual.</td></tr>
+        <tr><td class="inv"><code>ventana_venta</code></td><td class="ev">Cuatro columnas en <code>funcion</code></td><td class="ev">Extensión. Una función tiene una preventa y una venta general; no hacen falta filas para eso.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="h">Una fusión que se consideró y se descartó</div>
+    <p><code>linea_pedido</code> y <code>entrada</code> parecen la misma cosa: una butaca vendida es a la vez una línea de factura y una credencial de acceso. Fusionarlas ahorraría otra tabla.</p>
+    <p><b>No se hace, y el motivo es una regla de negocio.</b> Una entrada se puede transferir a otra persona (UC-27) y eso cambia su titular, mientras que la línea de factura no puede cambiar nunca: pertenece a una factura ya emitida. Fusionarlas obligaría a mutar un documento contable para regalar una entrada a un amigo. Son dos cosas con ciclos de vida distintos que casualmente empiezan juntas, y esa distinción vale como material de clase.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Vista general</span></div>
+  <h2>Mapa de agregados</h2>
+  <p class="lede prose">Las cajas agrupadas son agregados: cada uno tiene una raíz y se carga y se guarda como unidad. Las flechas entre grupos son referencias por identificador; las de dentro, composición. Nótese que <code>InventarioButaca</code> y <code>CuotaClienteFuncion</code> están solos en su grupo — eso es deliberado y es el núcleo del diseño.</p>
+  <div class="canvas">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#F7E8EE","primaryTextColor":"#1C1620","primaryBorderColor":"#8E1F45","lineColor":"#7C7385","secondaryColor":"#E7EAF1","tertiaryColor":"#FBF8FA","fontFamily":"IBM Plex Sans, sans-serif","fontSize":"13px","clusterBkg":"#FBF8FA","clusterBorder":"#C3B8C3"}}}%%
+flowchart TB
+  subgraph AG1["Agregado Recinto"]
+    R[Recinto] --- B["Butaca&lt;br/&gt;&lt;i&gt;zona como columna&lt;/i&gt;"]
+  end
+  subgraph AG2["Agregado Evento"]
+    E[Evento] --- F["Funcion&lt;br/&gt;&lt;i&gt;incluye aforo general&lt;/i&gt;"]
+    F --- PZ[PrecioZona]
+  end
+  subgraph AG3["Agregado InventarioButaca"]
+    IB["InventarioButaca&lt;br/&gt;&lt;i&gt;una fila, una retencion,&lt;br/&gt;un UPDATE condicional&lt;/i&gt;"]
+  end
+  subgraph AG4["Agregado Retencion"]
+    RT[Retencion]
+  end
+  subgraph AG5["Agregado Cuota"]
+    CQ["CuotaClienteFuncion&lt;br/&gt;&lt;i&gt;existe por consistencia&lt;/i&gt;"]
+  end
+  subgraph AG6["Agregado Pedido"]
+    P["Pedido&lt;br/&gt;&lt;i&gt;incluye pago e idempotencia&lt;/i&gt;"]
+    P --- LP[LineaPedido]
+  end
+  subgraph AG7["Agregado Entrada"]
+    EN[Entrada]
+  end
+  subgraph AG8["Agregado Cuenta"]
+    C["Cuenta&lt;br/&gt;&lt;i&gt;rol y nombre comercial&lt;/i&gt;"]
+    C --- RF[TokenRefresco]
+  end
+  OB["Outbox&lt;br/&gt;&lt;i&gt;tabla tecnica&lt;/i&gt;"]
+
+  E -. recinto_id .-> R
+  IB -. funcion_id + butaca_id .-> F
+  IB -. retencion_id .-> RT
+  RT -. cliente_id .-> C
+  P -. cliente_id .-> C
+  LP -. inventario_butaca_id .-> IB
+  EN -. pedido_id .-> P
+  CQ -. cliente_id + funcion_id .-> F
+  P -. publica .-> OB
+
+  style IB fill:#F7E8EE,stroke:#8E1F45,stroke-width:2px
+  style F fill:#F7E8EE,stroke:#8E1F45,stroke-width:2px
+  style CQ fill:#F7EEDC,stroke:#9E650D,stroke-width:2px
+</pre>
+  </div>
+  <p class="capt">En rojo, las dos filas por las que compiten todos los clientes a la vez: la butaca del inventario y el contador de aforo general, ahora alojado en la propia función. En ámbar, el agregado que existe únicamente para hacer verificable una invariante que cruza fronteras.</p>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">UML</span></div>
+  <h2>Diagrama de clases</h2>
+  <p class="lede prose">Repartido en tres vistas cortas a propósito. Un diagrama de doce clases se renderiza tan ancho que deja de leerse; tres de cuatro o cinco caben en pantalla y se pueden proyectar en clase. Solo aparecen los atributos que participan en una restricción y las operaciones que llevan lógica de negocio.</p>
+
+  <h3 class="sub">Vista 1 · Catálogo, programación e inventario</h3>
+  <div class="canvas">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#F7E8EE","primaryTextColor":"#1C1620","primaryBorderColor":"#8E1F45","lineColor":"#7C7385","secondaryColor":"#E7EAF1","tertiaryColor":"#FBF8FA","fontFamily":"IBM Plex Sans, sans-serif","fontSize":"13px"}}}%%
+classDiagram
+  direction LR
+
+  class Recinto {
+    &lt;&lt;Raiz&gt;&gt;
+    +String nombre
+    +anadirButaca(sector, fila, num)
+  }
+  class Butaca {
+    +String sector
+    +String fila
+    +String numero
+    +Zona zona
+    +boolean accesible
+  }
+  class Evento {
+    &lt;&lt;Raiz&gt;&gt;
+    +EstadoEvento estado
+    +publicar(promotor, reloj)
+    +cancelar(motivo)
+    +transitarA(estado)
+  }
+  class Funcion {
+    +Instant inicio
+    +int aforoTotal
+    +int aforoReservado
+    +generarInventario(recinto)
+    +reservarAforo(n) bool
+    +estaEnVenta(reloj) bool
+  }
+  class PrecioZona {
+    +Zona zona
+    +Tarifa tarifa
+    +Dinero importe
+  }
+
+  Recinto "1" *-- "0..*" Butaca
+  Evento "1" *-- "1..*" Funcion
+  Funcion "1" *-- "1..*" PrecioZona
+  Evento ..&gt; Recinto : por id
+</pre>
+  </div>
+  <p class="capt">El contador de aforo general vive ahora en <code>Funcion</code>: <code>reservarAforo</code> es el <code>UPDATE</code> atómico de UC-16.</p>
+
+  <h3 class="sub">Vista 2 · Inventario, retención y cuota</h3>
+  <div class="canvas">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#F7E8EE","primaryTextColor":"#1C1620","primaryBorderColor":"#8E1F45","lineColor":"#7C7385","secondaryColor":"#E7EAF1","tertiaryColor":"#FBF8FA","fontFamily":"IBM Plex Sans, sans-serif","fontSize":"13px"}}}%%
+classDiagram
+  direction LR
+
+  class InventarioButaca {
+    &lt;&lt;Raiz&gt;&gt;
+    +EstadoButaca estado
+    +RetencionId retencion
+    +retener(retencion) bool
+    +vender() bool
+    +liberar()
+  }
+  class Retencion {
+    &lt;&lt;Raiz&gt;&gt;
+    +Instant creadaEn
+    +Instant expiraEn
+    +EstadoRetencion estado
+    +haExpirado(reloj) bool
+    +confirmar(reloj)
+    +liberar()
+  }
+  class CuotaClienteFuncion {
+    &lt;&lt;Raiz&gt;&gt;
+    +int entradas
+    +cabe(n, limite) bool
+    +consumir(n)
+    +devolver(n)
+  }
+
+  InventarioButaca "0..*" ..&gt; "0..1" Retencion : retencion_id
+  Retencion ..&gt; CuotaClienteFuncion : consume al crearse
+</pre>
+  </div>
+  <p class="capt">Tres agregados de una sola clase cada uno. Que la retención se exprese como una columna de <code>InventarioButaca</code> es lo que hace la invariante estructural en lugar de vigilada.</p>
+
+  <h3 class="sub">Vista 3 · Venta, acceso e identidad</h3>
+  <div class="canvas">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#F7E8EE","primaryTextColor":"#1C1620","primaryBorderColor":"#8E1F45","lineColor":"#7C7385","secondaryColor":"#E7EAF1","tertiaryColor":"#FBF8FA","fontFamily":"IBM Plex Sans, sans-serif","fontSize":"13px"}}}%%
+classDiagram
+  direction LR
+
+  class Pedido {
+    &lt;&lt;Raiz&gt;&gt;
+    +EstadoPedido estado
+    +DesglosePrecio desglose
+    +String claveIdempotencia
+    +String refProveedor
+    +int intentosPago
+    +confirmar(pago)
+    +marcarParaConciliacion()
+  }
+  class LineaPedido {
+    +InventarioId butaca
+    +Tarifa tarifa
+    +Dinero base
+    +Dinero gastos
+  }
+  class DesglosePrecio {
+    &lt;&lt;Valor&gt;&gt;
+    +total() Dinero
+    +repartirDescuento(n)
+  }
+  class Entrada {
+    &lt;&lt;Raiz&gt;&gt;
+    +String codigoFirmado
+    +Instant usadaEn
+    +validar(puerta, reloj)
+    +transferir(cliente)
+  }
+  class Cuenta {
+    &lt;&lt;Raiz&gt;&gt;
+    +String email
+    +Rol rol
+    +String nombreComercial
+  }
+  class TokenRefresco {
+    +UUID familia
+    +boolean usado
+    +rotar() TokenRefresco
+  }
+
+  Pedido "1" *-- "1..*" LineaPedido
+  Pedido ..&gt; DesglosePrecio
+  Cuenta "1" *-- "0..*" TokenRefresco
+  Entrada ..&gt; Pedido : por id
+  Pedido ..&gt; Cuenta : por id
+</pre>
+  </div>
+  <p class="capt">Pago e idempotencia son ahora columnas de <code>Pedido</code>. <code>Cuenta</code> lleva su rol y, si es promotor, su nombre comercial.</p>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Esquema relacional</span></div>
+  <h2>Diagrama entidad-relación</h2>
+  <p class="lede prose">Catorce tablas de núcleo en dos áreas, más cinco que solo aparecen con casos de Extensión. Se muestran las claves y los atributos que participan en alguna restricción o en algún índice.</p>
+
+  <h3 class="sub">Área 1 · Catálogo, programación e inventario · 6 tablas</h3>
+  <div class="canvas">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#F7E8EE","primaryTextColor":"#1C1620","primaryBorderColor":"#8E1F45","lineColor":"#7C7385","secondaryColor":"#E7EAF1","tertiaryColor":"#FBF8FA","fontFamily":"IBM Plex Mono, monospace","fontSize":"14px"}}}%%
+erDiagram
+  RECINTO ||--o{ BUTACA : contiene
+  EVENTO }o--|| RECINTO : "se celebra en"
+  EVENTO ||--|{ FUNCION : programa
+  FUNCION ||--|{ PRECIO_ZONA : tarifica
+  FUNCION ||--o{ INVENTARIO_BUTACA : materializa
+  BUTACA ||--o{ INVENTARIO_BUTACA : "instancia por funcion"
+  INVENTARIO_BUTACA }o--o| RETENCION : "retenida por"
+
+  RECINTO {
+    uuid id PK
+    varchar nombre UK
+    varchar ciudad "indice de catalogo"
+  }
+  BUTACA {
+    uuid id PK
+    uuid recinto_id FK
+    varchar sector UK
+    varchar fila UK
+    varchar numero UK
+    varchar zona "antes era tabla"
+    boolean accesible
+  }
+  EVENTO {
+    uuid id PK
+    uuid promotor_id FK "autorizacion por propiedad"
+    uuid recinto_id FK
+    varchar titulo
+    varchar genero
+    varchar estado "maquina de estados"
+  }
+  FUNCION {
+    uuid id PK
+    uuid evento_id FK
+    timestamptz inicio "indice de catalogo"
+    int aforo_total "admision general"
+    int aforo_reservado "contador atomico"
+    int libres_cache "contador desnormalizado"
+    timestamptz venta_desde "Extension UC-24"
+    timestamptz venta_hasta "Extension UC-24"
+  }
+  PRECIO_ZONA {
+    uuid id PK
+    uuid funcion_id FK
+    varchar zona UK
+    varchar tarifa UK
+    bigint importe_centimos
+    char moneda
+  }
+  INVENTARIO_BUTACA {
+    uuid id PK
+    uuid funcion_id FK "UK con butaca_id"
+    uuid butaca_id FK
+    varchar estado "LIBRE RETENIDA VENDIDA INHABILITADA"
+    uuid retencion_id FK "NULL si libre"
+  }
+</pre>
+  </div>
+
+  <h3 class="sub">Área 2 · Retención, venta, acceso e identidad · 8 tablas</h3>
+  <div class="canvas">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#F7E8EE","primaryTextColor":"#1C1620","primaryBorderColor":"#8E1F45","lineColor":"#7C7385","secondaryColor":"#E7EAF1","tertiaryColor":"#FBF8FA","fontFamily":"IBM Plex Mono, monospace","fontSize":"14px"}}}%%
+erDiagram
+  CUENTA ||--o{ TOKEN_REFRESCO : emite
+  CUENTA ||--o{ RETENCION : crea
+  CUENTA ||--o{ PEDIDO : realiza
+  CUENTA ||--o{ CUOTA_CLIENTE_FUNCION : acumula
+  PEDIDO ||--|{ LINEA_PEDIDO : detalla
+  PEDIDO ||--o{ ENTRADA : emite
+
+  CUENTA {
+    uuid id PK
+    varchar email UK "sin enumeracion"
+    varchar hash_password "BCrypt o Argon2"
+    varchar rol "antes era tabla"
+    varchar nombre_comercial "si es promotor"
+    boolean verificada
+  }
+  TOKEN_REFRESCO {
+    uuid id PK
+    uuid cuenta_id FK
+    uuid familia "se invalida entera al reutilizar"
+    varchar token_hash UK
+    boolean usado
+    timestamptz expira_en
+  }
+  RETENCION {
+    uuid id PK
+    uuid cliente_id FK
+    uuid funcion_id FK
+    timestamptz expira_en "indice parcial del barrido"
+    varchar estado "ACTIVA CONFIRMADA EXPIRADA"
+  }
+  CUOTA_CLIENTE_FUNCION {
+    uuid cliente_id PK
+    uuid funcion_id PK
+    int entradas "invariante entre agregados"
+  }
+  PEDIDO {
+    uuid id PK
+    uuid cliente_id FK
+    uuid funcion_id FK
+    varchar clave_idempotencia UK "antes era tabla"
+    varchar estado "PENDIENTE PAGADO CONCILIAR CANCELADO"
+    varchar ref_proveedor "antes tabla pago"
+    int intentos_pago
+    bigint total_centimos "desglose congelado"
+  }
+  LINEA_PEDIDO {
+    uuid id PK
+    uuid pedido_id FK
+    uuid inventario_butaca_id FK
+    varchar tarifa
+    bigint base_centimos
+    bigint gastos_centimos
+    bigint impuestos_centimos
+  }
+  ENTRADA {
+    uuid id PK
+    uuid pedido_id FK
+    uuid inventario_butaca_id FK
+    uuid titular_id FK "cambia al transferir"
+    varchar codigo_hash UK "lectura de puerta"
+    timestamptz usada_en "NULL si no admitida"
+    varchar puerta
+  }
+  OUTBOX {
+    uuid id PK
+    varchar tipo
+    jsonb carga
+    timestamptz enviado_en "NULL si pendiente"
+    int intentos
+  }
+</pre>
+  </div>
+  <p class="capt"><code>OUTBOX</code> aparece sin relaciones a propósito: es una tabla técnica que no pertenece a ningún agregado de dominio.</p>
+
+  <h3 class="sub">Área 3 · Solo con casos de Extensión · 5 tablas</h3>
+  <div class="canvas">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#F7EEDC","primaryTextColor":"#1C1620","primaryBorderColor":"#9E650D","lineColor":"#7C7385","secondaryColor":"#E7EAF1","tertiaryColor":"#FBF8FA","fontFamily":"IBM Plex Mono, monospace","fontSize":"14px"}}}%%
+erDiagram
+  CODIGO_DESCUENTO ||--o{ USO_DESCUENTO : consume
+
+  CODIGO_DESCUENTO {
+    uuid id PK
+    varchar codigo UK
+    numeric porcentaje
+    int cupo_total
+    int cupo_usado
+  }
+  USO_DESCUENTO {
+    uuid codigo_id PK
+    uuid cliente_id PK
+  }
+  EVENTO_WEBHOOK {
+    varchar id_proveedor PK "idempotencia del aviso"
+    bigint secuencia "descarte de avisos viejos"
+    boolean procesado
+  }
+  REEMBOLSO {
+    uuid id PK
+    uuid pedido_id FK
+    bigint importe_centimos
+    varchar lote_id "reanudacion idempotente"
+    varchar estado
+  }
+  AUDITORIA {
+    uuid id PK
+    uuid actor_id FK
+    varchar accion
+    varchar recurso
+    timestamptz momento
+    jsonb detalle "registro no modificable"
+  }
+</pre>
+  </div>
+  <p class="capt">Ninguna de estas cinco existe en un proyecto que entregue solo el núcleo. Las ventanas de venta, que antes eran tabla, son ahora dos columnas de <code>FUNCION</code>.</p>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Garantías</span></div>
+  <h2>Cada invariante y cómo se sostiene</h2>
+  <p class="lede prose">Es la tabla más útil del documento para preparar la asignatura. Ninguna invariante se garantiza con un condicional en Java: cada una tiene un mecanismo en la base de datos. Nótese que <b>las tres primeras usan el mismo patrón</b> —<code>UPDATE</code> con la condición dentro, decidiendo por filas afectadas— y que la última es interesante precisamente porque no admite mecanismo declarativo.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Invariante</th><th>Mecanismo de garantía</th><th>Caso</th></tr></thead>
+      <tbody>
+        <tr><td class="inv">Una butaca la retiene, como mucho, una parte</td><td class="mono">UPDATE inventario_butaca SET estado='RETENIDA', retencion_id=:r<br>WHERE id IN (…) AND estado='LIBRE'<br><span style="color:var(--ink-3)">— bajo <em>read committed</em> el motor espera, relee la fila y reevalúa el WHERE, así que la segunda petición afecta a cero filas. Y la columna <code>retencion_id</code> solo admite un valor: la invariante es estructural, no vigilada</span></td><td class="uc">UC-14</td></tr>
+        <tr><td class="inv">Una butaca física no se repite en un recinto</td><td class="mono">UNIQUE (recinto_id, sector, fila, numero)</td><td class="uc">UC-01 · UC-10</td></tr>
+        <tr><td class="inv">Una fila de inventario por butaca y función</td><td class="mono">UNIQUE (funcion_id, butaca_id)</td><td class="uc">UC-07</td></tr>
+        <tr><td class="inv">No se reserva más aforo del disponible</td><td class="mono">CHECK (aforo_reservado &lt;= aforo_total)<br>UPDATE funcion SET aforo_reservado = aforo_reservado + :n<br>WHERE id = :id AND aforo_total - aforo_reservado &gt;= :n</td><td class="uc">UC-16</td></tr>
+        <tr><td class="inv">Una confirmación de compra produce un pedido</td><td class="mono">UNIQUE (clave_idempotencia) en pedido</td><td class="uc">UC-18</td></tr>
+        <tr><td class="inv">Una entrada se valida una sola vez</td><td class="mono">UPDATE entrada SET usada_en = now(), puerta = :p<br>WHERE id = :id AND usada_en IS NULL</td><td class="uc">UC-22</td></tr>
+        <tr><td class="inv">Un refresco no se puede reutilizar</td><td class="mono">UNIQUE (token_hash) + <code>usado</code>; al reutilizar se invalida la familia entera</td><td class="uc">UC-23</td></tr>
+        <tr><td class="inv">Máximo 6 entradas por persona y función</td><td class="mono">UPDATE cuota SET entradas = entradas + :n<br>WHERE cliente_id=:c AND funcion_id=:f AND entradas + :n &lt;= 6<br><span style="color:var(--ink-3)">— el fenómeno es <em>write skew</em>, pero al condensar comprobación y escritura en una sentencia desaparece sin tocar el nivel de aislamiento</span></td><td class="uc">UC-15</td></tr>
+        <tr><td class="inv">Un cupón se usa una vez por persona</td><td class="mono">PRIMARY KEY (codigo_id, cliente_id) + UPDATE … WHERE cupo_usado &lt; cupo_total <span style="color:var(--ink-3)">· Extensión</span></td><td class="uc">UC-25</td></tr>
+        <tr><td class="inv">Un aviso del proveedor se procesa una vez</td><td class="mono">PRIMARY KEY (id_proveedor) en evento_webhook <span style="color:var(--ink-3)">· Extensión</span></td><td class="uc">UC-26</td></tr>
+        <tr><td class="inv">Toda butaca está cubierta por una zona con precio</td><td class="mono"><span style="color:var(--held)">Sin equivalente declarativo.</span> Se verifica con una consulta de agregación al publicar, y la protege la máquina de estados: solo un evento verificado alcanza EN_VENTA.<br><span style="color:var(--ink-3)">— buen ejemplo de invariante que la base de datos no puede expresar y que por tanto vive en el dominio</span></td><td class="uc">UC-05 · UC-06</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Rendimiento</span></div>
+  <h2>Índices propuestos</h2>
+  <p class="lede prose"><b>Estos índices vienen dados en el esquema del repositorio semilla; no se le pide al alumnado que los deduzca.</b> La estrategia de indexación —índices parciales, orden de columnas en los compuestos, coste en escritura— se acordó sacar del núcleo por profundidad excesiva y es contenido de la asignatura siguiente. Esta tabla queda aquí como referencia del profesorado, para saber qué lleva el esquema y por qué.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Índice</th><th>Sirve a</th><th>Coste en escritura</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">inventario_butaca (funcion_id, estado)<br>WHERE estado = 'LIBRE'</td><td class="ev">Mapa de butacas y recuento de disponibilidad. Parcial, porque solo interesan las libres y son minoría cuando el evento va bien.</td><td class="ev">Alto: se toca en cada retención y en cada venta, que es el pico de escritura. Es el índice a vigilar.</td></tr>
+        <tr><td class="mono">funcion (inicio, id)</td><td class="ev">Paginación por clave del catálogo, estable bajo inserción concurrente.</td><td class="ev">Bajo: las funciones se crean una vez.</td></tr>
+        <tr><td class="mono">evento (estado, genero)</td><td class="ev">Filtros del catálogo. El orden de columnas importa: primero la de menor cardinalidad efectiva tras el filtro habitual.</td><td class="ev">Bajo.</td></tr>
+        <tr><td class="mono">entrada (codigo_hash) UNIQUE</td><td class="ev">Validación en puerta. Sostiene el requisito de responder por debajo de 200 ms con 3.000 personas entrando.</td><td class="ev">Medio: una escritura por emisión y otra por validación.</td></tr>
+        <tr><td class="mono">retencion (expira_en)<br>WHERE estado = 'ACTIVA'</td><td class="ev">Barrido de caducadas. Parcial y pequeño: solo las activas, que son las de los últimos diez minutos.</td><td class="ev">Medio, acotado por el propio predicado parcial.</td></tr>
+        <tr><td class="mono">outbox (id)<br>WHERE enviado_en IS NULL</td><td class="ev">Localizar pendientes sin recorrer el histórico. Se mantiene diminuto por construcción.</td><td class="ev">Muy bajo.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <div class="h">Material reservado para el segundo trimestre</div>
+    <p>Lo interesante de este esquema es que <b>los tres índices más valiosos son parciales</b>, y no por casualidad: en un sistema de ticketing las consultas calientes se refieren siempre a un subconjunto pequeño y transitorio —lo libre, lo activo, lo pendiente— mientras que el volumen está en lo ya resuelto. Un índice completo sobre <code>estado</code> indexaría 20.000 filas para servir consultas que solo miran 300.</p>
+    <p>Es un contenido excelente y por eso se reserva: en el primer trimestre se entrega hecho, y en el segundo, con más base, se puede pedir que lo deduzcan midiendo.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Verificación</span></div>
+  <h2>El modelo frente al catálogo</h2>
+  <p class="lede prose">Comprobación de que cada tabla tiene casos de uso que la ejercitan y de que ningún caso del núcleo se queda sin soporte. Catorce tablas para veintitrés casos de uso obligatorios.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Tabla</th><th>Nivel</th><th>Casos que la ejercitan</th><th>Coste de construcción</th></tr></thead>
+      <tbody>
+        <tr><td class="inv"><code>recinto</code></td><td class="uc">Núcleo</td><td class="uc">UC-01</td><td class="ev">Soporte</td></tr>
+        <tr><td class="inv"><code>butaca</code></td><td class="uc">Núcleo</td><td class="uc">UC-01 · UC-05 · UC-10</td><td class="ev">Soporte, con volumen</td></tr>
+        <tr><td class="inv"><code>evento</code></td><td class="uc">Núcleo</td><td class="uc">UC-02 · UC-06 · UC-11</td><td class="ev"><b>Con lógica</b> · máquina de estados</td></tr>
+        <tr><td class="inv"><code>funcion</code></td><td class="uc">Núcleo</td><td class="uc">UC-07 · UC-16 · UC-24</td><td class="ev"><b>Con lógica</b> · inventario y contador de aforo</td></tr>
+        <tr><td class="inv"><code>precio_zona</code></td><td class="uc">Núcleo</td><td class="uc">UC-05 · UC-08</td><td class="ev">Soporte</td></tr>
+        <tr><td class="inv"><code>inventario_butaca</code></td><td class="uc">Núcleo</td><td class="uc">UC-07 · UC-12 · UC-14 · UC-17</td><td class="ev"><b>Con lógica</b> · la fila disputada</td></tr>
+        <tr><td class="inv"><code>retencion</code></td><td class="uc">Núcleo</td><td class="uc">UC-14 · UC-17 · UC-20</td><td class="ev"><b>Con lógica</b> · ciclo de vida y caducidad</td></tr>
+        <tr><td class="inv"><code>cuota_cliente_funcion</code></td><td class="uc">Núcleo</td><td class="uc">UC-15</td><td class="ev"><b>Con lógica</b> · <em>write skew</em></td></tr>
+        <tr><td class="inv"><code>pedido</code></td><td class="uc">Núcleo</td><td class="uc">UC-08 · UC-18 · UC-19 · UC-13</td><td class="ev"><b>Con lógica</b> · estados, pago e idempotencia</td></tr>
+        <tr><td class="inv"><code>linea_pedido</code></td><td class="uc">Núcleo</td><td class="uc">UC-08</td><td class="ev">Soporte</td></tr>
+        <tr><td class="inv"><code>entrada</code></td><td class="uc">Núcleo</td><td class="uc">UC-20 · UC-21 · UC-22</td><td class="ev"><b>Con lógica</b> · validación en puerta</td></tr>
+        <tr><td class="inv"><code>outbox</code></td><td class="uc">Núcleo</td><td class="uc">UC-20</td><td class="ev">Soporte, y es el punto del caso</td></tr>
+        <tr><td class="inv"><code>cuenta</code></td><td class="uc">Núcleo</td><td class="uc">UC-04 · UC-09</td><td class="ev">Soporte · rol y nombre comercial incluidos</td></tr>
+        <tr><td class="inv"><code>token_refresco</code></td><td class="uc">Núcleo</td><td class="uc">UC-23</td><td class="ev"><b>Con lógica</b> · rotación y familia</td></tr>
+        <tr><td class="inv"><code>codigo_descuento</code> · <code>uso_descuento</code></td><td class="uc">Extensión</td><td class="uc">UC-25</td><td class="ev">Una con lógica, otra de soporte</td></tr>
+        <tr><td class="inv"><code>evento_webhook</code></td><td class="uc">Extensión</td><td class="uc">UC-26</td><td class="ev">Soporte, y es el punto del caso</td></tr>
+        <tr><td class="inv"><code>reembolso</code></td><td class="uc">Extensión</td><td class="uc">UC-28 · UC-29</td><td class="ev">Soporte, con proceso por lotes</td></tr>
+        <tr><td class="inv"><code>auditoria</code></td><td class="uc">Extensión</td><td class="uc">UC-32</td><td class="ev">Soporte</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="capt">Ocho tablas con lógica propia y seis de soporte en el núcleo. El esfuerzo del proyecto está en las ocho primeras.</p>
+
+  <div class="callout">
+    <div class="h">Lo que este modelo deliberadamente no tiene</div>
+    <p><b>Ni cola de mensajes, ni caché distribuida, ni separación de lectura y escritura, ni ningún servicio adicional.</b> Catorce tablas y un proceso bastan para los 23 casos de uso del núcleo, incluidos todos los de concurrencia. Es una afirmación comprobable y conviene hacerla explícita: la reacción natural ante un problema de contención es añadir infraestructura, y aquí se resuelve con una restricción de unicidad y un <code>UPDATE</code> bien escrito.</p>
+    <p><b>Tampoco hay herencia de entidades, y es una decisión.</b> <code>Cuenta</code> podría tener subtipos y se ha dejado como una entidad con un rol y un nombre comercial anulable. El motivo es el habitual: la estrategia de tabla por subclase obliga a un <em>join</em> cada vez que se lee la entidad completa; la de tabla única degrada las restricciones a columnas anulables gobernadas por un discriminador, de modo que la base de datos deja de garantizar lo que antes garantizaba; y una jerarquía persistida es más rígida de evolucionar, porque cambiarla obliga a migrar datos y no solo código. Se pierde un tema de mapeo y se gana otro mejor: <b>saber por qué no se usa vale más que saber elegir entre dos opciones con inconvenientes conocidos</b>.</p>
+    <p><b>Y no hay columna <code>version</code> en ninguna tabla</b>, que es una decisión reciente y deliberada. El bloqueo optimista es un mecanismo excelente, pero aquí no haría falta: el <code>UPDATE</code> condicional ya garantiza la corrección por sí solo, y una anotación cuyo efecto nunca se demuestra es peor que su ausencia. El bloqueo optimista aparece solo en UC-39, en Élite, y para un problema distinto: la edición larga de un formulario, donde el cambio son quince campos y no cabe en una sentencia condicional.</p>
+    <p>Y en la misma línea: no hay claves compuestas más allá de <code>cuota_cliente_funcion</code> y <code>uso_descuento</code>, ni mapeos polimórficos, porque ningún caso de uso los pide. El modelo se juzga por lo que necesita.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Modelo de Aforo · complemento del catálogo de casos de uso · documento de trabajo del equipo docente</p>
+</footer>
+
+</div>

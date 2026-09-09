@@ -1,0 +1,2015 @@
+<title>Aforo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --ground:#F6F3F5; --surface:#FFFFFF; --surface-2:#EFEAEE; --sunk:#EBE5EA;
+  --ink:#1C1620; --ink-2:#4C4353; --ink-3:#7C7385;
+  --rule:#DED6DD; --rule-strong:#C3B8C3;
+  --accent:#8E1F45; --accent-2:#B8305C; --accent-soft:#F7E8EE;
+  --free:#276F53; --free-soft:#E4F0EA;
+  --held:#9E650D; --held-soft:#F7EEDC;
+  --sold:#7F3636; --sold-soft:#F5E5E5;
+  --slate:#3F4A63; --slate-soft:#E7EAF1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#151119; --surface:#1E1922; --surface-2:#282230; --sunk:#120E16;
+    --ink:#F0EAF1; --ink-2:#BEB3C1; --ink-3:#8D8397;
+    --rule:#332B3A; --rule-strong:#4C4255;
+    --accent:#E87BA1; --accent-2:#F2A0BD; --accent-soft:#37202B;
+    --free:#63C79B; --free-soft:#1B2E26;
+    --held:#DFA84B; --held-soft:#312716;
+    --sold:#E08585; --sold-soft:#33201F;
+    --slate:#9AA8C7; --slate-soft:#22283A;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#151119; --surface:#1E1922; --surface-2:#282230; --sunk:#120E16;
+  --ink:#F0EAF1; --ink-2:#BEB3C1; --ink-3:#8D8397;
+  --rule:#332B3A; --rule-strong:#4C4255;
+  --accent:#E87BA1; --accent-2:#F2A0BD; --accent-soft:#37202B;
+  --free:#63C79B; --free-soft:#1B2E26;
+  --held:#DFA84B; --held-soft:#312716;
+  --sold:#E08585; --sold-soft:#33201F;
+  --slate:#9AA8C7; --slate-soft:#22283A;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.62; margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px; margin:0 auto; padding:0 24px}
+p{margin:0}
+.prose{max-width:66ch}
+h1,h2,h3,h4{margin:0; text-wrap:balance}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+code{
+  font-size:.855em; background:var(--surface-2); color:var(--ink);
+  padding:.1em .34em; border-radius:2px; word-break:break-word;
+}
+a{color:var(--accent); text-decoration-thickness:1px; text-underline-offset:2px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent-2); outline-offset:3px; border-radius:2px}
+
+/* ---------- masthead ---------- */
+.marquee{
+  background:var(--sunk); border-bottom:1px solid var(--rule);
+  padding:56px 0 0;
+}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3);
+}
+h1{
+  font-family:"Big Shoulders Display","Arial Narrow",sans-serif;
+  font-weight:800; font-size:clamp(76px,15vw,168px); line-height:.8;
+  letter-spacing:.005em; color:var(--ink); margin:14px 0 0;
+}
+.tagline{
+  font-size:clamp(19px,2.4vw,25px); line-height:1.32; color:var(--ink-2);
+  max-width:30ch; margin-top:22px; font-weight:400;
+}
+.tagline b{color:var(--ink); font-weight:600}
+.stubrow{
+  display:flex; flex-wrap:wrap; gap:0; margin-top:38px;
+  border-top:1px solid var(--rule); border-bottom:1px dashed var(--rule-strong);
+}
+.stub{
+  flex:1 1 150px; padding:14px 18px 15px; border-right:1px solid var(--rule);
+}
+.stub:last-child{border-right:0}
+.stub .k{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); display:block;
+}
+.stub .v{
+  font-family:"Big Shoulders Display",sans-serif; font-weight:700;
+  font-size:26px; line-height:1.1; margin-top:3px; color:var(--ink);
+}
+.stub .v small{font-family:"IBM Plex Sans",sans-serif; font-size:12px; font-weight:500; color:var(--ink-2)}
+
+/* ---------- sections ---------- */
+section{padding:60px 0 4px}
+.sechead{display:flex; align-items:baseline; gap:14px; margin-bottom:8px; flex-wrap:wrap}
+.sechead .tag{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); font-weight:600;
+}
+h2{
+  font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:700;
+  font-size:clamp(38px,5.4vw,54px); line-height:.96; letter-spacing:.01em;
+}
+.lede{color:var(--ink-2); margin-top:14px; margin-bottom:30px}
+hr.rule{border:0; border-top:1px solid var(--rule); margin:0}
+
+/* ---------- generic cards ---------- */
+.card{
+  background:var(--surface); border:1px solid var(--rule); border-radius:3px;
+}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:18px}
+.grid3{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px}
+
+/* ---------- logic thread ---------- */
+.layer{
+  display:grid; grid-template-columns:minmax(150px,190px) 1fr; gap:0;
+  border:1px solid var(--rule); border-bottom:0; background:var(--surface);
+}
+.layer:last-of-type{border-bottom:1px solid var(--rule)}
+.layer .where{
+  padding:16px 18px; background:var(--surface-2); border-right:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+  letter-spacing:.03em; color:var(--ink); display:flex; align-items:flex-start;
+}
+.layer .what{padding:16px 20px}
+.layer .what b{color:var(--ink); font-weight:600}
+.layer .what span{display:block; color:var(--ink-2); font-size:14.5px; margin-top:4px}
+
+/* ---------- tiers ---------- */
+.tier{border:1px solid var(--rule); border-radius:3px; background:var(--surface); padding:20px 20px 22px}
+.tier h3{
+  font-family:"Big Shoulders Display",sans-serif; font-weight:700; font-size:30px;
+  line-height:1; margin-bottom:6px;
+}
+.tier .count{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3)}
+.tier p{font-size:14.5px; color:var(--ink-2); margin-top:12px}
+.tier.n{border-top:3px solid var(--accent)}
+.tier.e{border-top:3px solid var(--held)}
+.tier.x{border-top:3px solid var(--slate)}
+
+/* ---------- chips ---------- */
+.chip{
+  display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px;
+  font-weight:600; letter-spacing:.11em; text-transform:uppercase;
+  padding:3px 7px 2px; border-radius:2px; white-space:nowrap; vertical-align:2px;
+}
+.chip.n{background:var(--accent); color:#fff}
+:root[data-theme="dark"] .chip.n{color:#2A0E19}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip.n{color:#2A0E19}}
+.chip.e{background:var(--held-soft); color:var(--held); border:1px solid var(--held)}
+.chip.x{background:var(--slate-soft); color:var(--slate); border:1px solid var(--slate)}
+
+/* ---------- module + use cases ---------- */
+.module{margin-top:40px}
+.modhead{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  border-bottom:2px solid var(--ink); padding-bottom:8px; margin-bottom:6px;
+}
+.modhead .id{
+  font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:13px;
+  color:var(--accent); letter-spacing:.06em;
+}
+.modhead h3{font-family:"Big Shoulders Display",sans-serif; font-weight:700; font-size:31px; line-height:1}
+.modhead .budget{
+  margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:11px;
+  color:var(--ink-3); letter-spacing:.05em;
+}
+.modnote{font-size:14.5px; color:var(--ink-2); margin:12px 0 20px; max-width:74ch}
+
+.uc{position:relative; background:var(--surface); border:1px solid var(--rule); border-radius:3px; margin-bottom:14px}
+.uc.star{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.uc .top{display:flex; gap:11px; align-items:baseline; padding:15px 20px 13px; flex-wrap:wrap}
+.uc .ucid{font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600; color:var(--accent); letter-spacing:.04em}
+.uc h4{font-size:17.5px; font-weight:600; line-height:1.25; flex:1 1 240px}
+.perf{position:relative; border-top:1px dashed var(--rule-strong); margin:0 0}
+.perf::before,.perf::after{
+  content:""; position:absolute; top:-7px; width:13px; height:13px;
+  border-radius:50%; background:var(--ground); border:1px solid var(--rule);
+}
+.perf::before{left:-7px} .perf::after{right:-7px}
+.uc .body{padding:16px 20px 19px; display:grid; gap:15px}
+@media(min-width:820px){ .uc .body.split{grid-template-columns:1fr 1fr; gap:15px 30px} }
+.uc .body p{font-size:15px; color:var(--ink-2)}
+.uc .body p.what{color:var(--ink); grid-column:1/-1}
+.blk .h{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); margin-bottom:6px;
+}
+.blk ul{margin:0; padding-left:17px; font-size:14.5px; color:var(--ink-2)}
+.blk li{margin-bottom:5px}
+.blk li::marker{color:var(--rule-strong)}
+.blk.reto{background:var(--accent-soft); border-radius:3px; padding:13px 15px 14px; margin:0 -2px}
+.blk.reto .h{color:var(--accent)}
+.blk.reto li::marker{color:var(--accent)}
+.check{
+  grid-column:1/-1; border-top:1px solid var(--rule); padding-top:12px;
+  font-size:14px; color:var(--ink-2); display:flex; gap:9px; align-items:baseline;
+}
+.check .lbl{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--free); white-space:nowrap;
+}
+.uc.compact .body{padding:14px 20px 17px}
+.uc.compact .body p{font-size:14.5px}
+.uc.compact .body p .rl{color:var(--ink); font-weight:600}
+</style>
+<style>
+/* ---------- coverage table ---------- */
+.tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:3px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:720px; font-size:14.5px}
+th,td{text-align:left; padding:11px 16px; border-bottom:1px solid var(--rule); vertical-align:top}
+thead th{
+  background:var(--surface-2); font-family:"IBM Plex Mono",monospace; font-size:10px;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); font-weight:600;
+  position:sticky; top:0;
+}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600; color:var(--ink); white-space:nowrap}
+td.refs{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--accent); line-height:1.7}
+td.ev{color:var(--ink-2)}
+
+/* ---------- sessions ---------- */
+.ses{
+  display:grid; grid-template-columns:78px 1fr; border:1px solid var(--rule);
+  border-bottom:0; background:var(--surface);
+}
+.ses:last-of-type{border-bottom:1px solid var(--rule)}
+.ses .num{
+  background:var(--surface-2); border-right:1px solid var(--rule);
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding:16px 6px 18px; gap:2px;
+}
+.ses .num b{
+  font-family:"Big Shoulders Display",sans-serif; font-weight:800; font-size:44px;
+  line-height:.85; color:var(--ink);
+}
+.ses.hot .num{background:var(--accent); }
+.ses.hot .num b{color:#fff}
+:root[data-theme="dark"] .ses.hot .num b{color:#2A0E19}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ses.hot .num b{color:#2A0E19}}
+.ses .num .s{font-family:"IBM Plex Mono",monospace; font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ses.hot .num .s{color:#fff; opacity:.75}
+:root[data-theme="dark"] .ses.hot .num .s{color:#2A0E19; opacity:.7}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ses.hot .num .s{color:#2A0E19; opacity:.7}}
+.ses .co{padding:16px 20px 20px}
+.ses h4{font-size:19px; font-weight:600; line-height:1.2}
+.ses .ucs{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--accent); margin-top:5px; letter-spacing:.03em}
+.ses dl{display:grid; grid-template-columns:auto 1fr; gap:5px 13px; margin:13px 0 0; font-size:14.5px}
+.ses dt{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--ink-3); padding-top:5px; white-space:nowrap;
+}
+.ses dd{margin:0; color:var(--ink-2)}
+.ses dd b{color:var(--ink); font-weight:600}
+.ses dd.deliv{color:var(--ink); background:var(--free-soft); border-left:2px solid var(--free); padding:7px 11px; border-radius:0 2px 2px 0}
+@media(max-width:560px){ .ses{grid-template-columns:56px 1fr} .ses .num b{font-size:32px} .ses dl{grid-template-columns:1fr; gap:2px} .ses dd{margin-bottom:9px} }
+
+/* ---------- rhythm strip ---------- */
+.rhythm{display:flex; flex-wrap:wrap; border:1px solid var(--rule); background:var(--surface); border-radius:3px; overflow:hidden; margin-bottom:26px}
+.rhythm div{flex:1 1 130px; padding:12px 15px 14px; border-right:1px solid var(--rule)}
+.rhythm div:last-child{border-right:0}
+.rhythm .t{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; color:var(--accent); letter-spacing:.04em}
+.rhythm .d{font-size:13.5px; color:var(--ink-2); margin-top:3px; line-height:1.4}
+
+/* ---------- weights / rubric ---------- */
+.rub{display:grid; gap:0; border:1px solid var(--rule); border-radius:3px; overflow:hidden; background:var(--surface)}
+.rub .row{display:grid; grid-template-columns:56px 1fr; align-items:center; border-bottom:1px solid var(--rule)}
+.rub .row:last-child{border-bottom:0}
+.rub .pc{
+  font-family:"Big Shoulders Display",sans-serif; font-weight:700; font-size:26px;
+  color:var(--accent); text-align:right; padding:10px 12px 10px 14px; line-height:1;
+}
+.rub .lb{padding:10px 16px 11px}
+.rub .lb b{font-weight:600; font-size:15px}
+.rub .lb span{display:block; font-size:13.5px; color:var(--ink-2); line-height:1.45}
+.bar{height:3px; background:var(--rule)}
+.bar i{display:block; height:100%; background:var(--accent)}
+
+/* ---------- numbered plain lists ---------- */
+ol.steps{counter-reset:s; list-style:none; padding:0; margin:0; display:grid; gap:11px}
+ol.steps li{
+  counter-increment:s; position:relative; padding-left:38px; font-size:15px; color:var(--ink-2);
+}
+ol.steps li::before{
+  content:counter(s); position:absolute; left:0; top:1px;
+  font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600;
+  width:24px; height:24px; border:1px solid var(--rule-strong); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; color:var(--accent);
+}
+ol.steps li b{color:var(--ink); font-weight:600}
+ul.plain{margin:0; padding-left:18px; color:var(--ink-2); font-size:15px}
+ul.plain li{margin-bottom:8px}
+ul.plain li b{color:var(--ink); font-weight:600}
+
+/* ---------- callout ---------- */
+.callout{
+  background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--accent);
+  border-radius:0 3px 3px 0; padding:17px 20px 19px; margin:22px 0;
+}
+.callout .h{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:7px;
+}
+.callout p{font-size:15px; color:var(--ink-2)}
+.callout p + p{margin-top:9px}
+.callout b{color:var(--ink); font-weight:600}
+
+footer{border-top:1px solid var(--rule); margin-top:64px; padding:26px 0 46px}
+footer p{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); letter-spacing:.03em}
+*{transition:none}
+@media(prefers-reduced-motion:no-preference){ .uc,.card{transition:border-color .15s ease} }
+</style>
+<style>
+/* nivel de dificultad */
+.lvl{
+  display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px;
+  font-weight:600; letter-spacing:.09em; padding:3px 7px 2px; border-radius:2px;
+  white-space:nowrap; vertical-align:2px; border:1px solid;
+}
+.lvl.l0{background:var(--free-soft); color:var(--free); border-color:var(--free)}
+.lvl.l1{background:var(--slate-soft); color:var(--slate); border-color:var(--slate)}
+.lvl.l2{background:var(--held-soft); color:var(--held); border-color:var(--held)}
+.lvl.l3{background:var(--sold-soft); color:var(--sold); border-color:var(--sold)}
+
+/* bloque de trabajo de dominio */
+.blk.dom{background:var(--surface-2); border-radius:3px; padding:13px 15px 14px; margin:0 -2px}
+.blk.dom .h{color:var(--ink-2)}
+
+/* estrategia de prueba por caso de uso */
+.tests{grid-column:1/-1; border-top:1px solid var(--rule); padding-top:13px; display:grid; gap:7px}
+.tests .oblig{font-weight:500; letter-spacing:.06em; text-transform:none; color:var(--accent)}
+.tests .h{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); margin-bottom:2px;
+}
+.trow{display:grid; grid-template-columns:112px 1fr; gap:12px; align-items:baseline; font-size:14px; color:var(--ink-2)}
+.tk{
+  font-family:"IBM Plex Mono",monospace; font-size:9.5px; font-weight:600; letter-spacing:.08em;
+  text-transform:uppercase; padding:3px 6px 2px; border-radius:2px; text-align:center;
+  border:1px solid; white-space:nowrap;
+}
+.tk.u{background:var(--free-soft); color:var(--free); border-color:var(--free)}
+.tk.s{background:var(--slate-soft); color:var(--slate); border-color:var(--slate)}
+.tk.i{background:var(--held-soft); color:var(--held); border-color:var(--held)}
+.tk.e{background:var(--accent-soft); color:var(--accent); border-color:var(--accent)}
+.tk.c{background:var(--sold-soft); color:var(--sold); border-color:var(--sold)}
+@media(max-width:560px){ .trow{grid-template-columns:1fr; gap:3px} .tk{justify-self:start} }
+
+/* curva de dificultad */
+.curve{display:grid; gap:0; border:1px solid var(--rule); border-radius:3px; overflow:hidden; background:var(--surface)}
+.crow{display:grid; grid-template-columns:96px 1fr 128px; border-bottom:1px solid var(--rule)}
+.crow:last-child{border-bottom:0}
+.crow .cl{padding:14px 14px 16px; border-right:1px solid var(--rule); background:var(--surface-2)}
+.crow .cl b{font-family:"Big Shoulders Display",sans-serif; font-size:30px; line-height:.9; display:block}
+.crow .cl span{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+.crow.n0 .cl b{color:var(--free)} .crow.n1 .cl b{color:var(--slate)}
+.crow.n2 .cl b{color:var(--held)} .crow.n3 .cl b{color:var(--sold)}
+.crow .cc{padding:14px 18px 16px}
+.crow .cc b{font-size:15.5px; font-weight:600; display:block; margin-bottom:4px}
+.crow .cc span{font-size:14.5px; color:var(--ink-2)}
+.crow .cr{padding:14px 16px; border-left:1px solid var(--rule); font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); line-height:1.7}
+@media(max-width:640px){ .crow{grid-template-columns:1fr} .crow .cl,.crow .cr{border:0; border-bottom:1px solid var(--rule)} }
+
+/* código */
+pre{
+  background:var(--sunk); border:1px solid var(--rule); border-radius:3px;
+  padding:14px 16px; overflow-x:auto; margin:0;
+  font-family:"IBM Plex Mono",monospace; font-size:12.5px; line-height:1.62; color:var(--ink-2);
+}
+pre b{color:var(--accent); font-weight:600}
+pre i{color:var(--ink-3); font-style:normal}
+pre u{color:var(--free); text-decoration:none}
+.codehead{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:7px;
+}
+.scn{border:1px solid var(--rule); border-radius:3px; background:var(--surface); padding:18px 20px 20px; margin-bottom:16px}
+.scn h4{font-size:16.5px; font-weight:600; margin-bottom:4px}
+.scn .meta{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--accent); margin-bottom:14px}
+.scn .pair{display:grid; gap:16px; margin-top:14px}
+@media(min-width:860px){ .scn .pair{grid-template-columns:1fr 1fr; gap:20px} }
+.scn p{font-size:14.5px; color:var(--ink-2); margin-bottom:10px}
+</style>
+
+<div class="marquee">
+  <div class="wrap">
+    <div class="eyebrow">Documento de trabajo del equipo docente &middot; Ingeniería del Software</div>
+    <h1>Aforo</h1>
+    <p class="tagline">Plataforma de venta de entradas cuya dificultad principal no es la gestión de datos, sino <b>la corrección bajo acceso concurrente a un inventario finito y disputado</b>.</p>
+    <div class="stubrow">
+      <div class="stub"><span class="k">Sesiones</span><div class="v">9 <small>&times; 3 h 45 min</small></div></div>
+      <div class="stub"><span class="k">Equipos</span><div class="v">4 <small>personas</small></div></div>
+      <div class="stub"><span class="k">Pila</span><div class="v">Spring Boot <small>JPA · PostgreSQL · monolito</small></div></div>
+      <div class="stub"><span class="k">Catálogo</span><div class="v">39 <small>casos de uso en 4 niveles</small></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<section>
+  <div class="callout" style="margin-top:44px">
+    <div class="h">Naturaleza de este documento</div>
+    <p>Es un <b>documento de trabajo interno del equipo docente</b>, no material de aula. Su nivel de detalle está pensado para que el profesorado discuta y cierre la solución técnica antes de impartirla: por eso cada caso de uso lleva desglosado su trabajo de dominio, su trabajo técnico y su estrategia de prueba.</p>
+    <p>El material que reciba el alumnado será una <b>reducción posterior</b> de este documento, previsiblemente repartida en varias entregas. Un texto de esta extensión no funciona como enunciado.</p>
+    <p><b>Documento complementario:</b> <a href="https://claude.ai/code/artifact/6d837eb6-2bc0-4e09-8c7b-2de017cea882">Modelo de Aforo</a> — diagrama de clases UML, esquema entidad-relación de <b>14 tablas en el núcleo</b> y la tabla de restricciones que garantiza cada invariante. Va aparte porque se consulta de otra manera: este se lee, aquel se mira.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="tag">Justificación</span></div>
+  <h2>Por qué este dominio</h2>
+  <p class="lede prose">La venta de entradas tiene una propiedad poco común entre los proyectos docentes: <b>la implementación intuitiva es incorrecta, y su incorrección se puede demostrar con un test automático</b>. La secuencia comprobar-y-actuar que casi todo el mundo escribe primero supera cualquier prueba manual y falla de forma reproducible con cincuenta hilos concurrentes. El defecto es un <em>lost update</em> de manual, es reproducible y es medible, lo que permite enseñarlo sin recurrir al argumento de autoridad.</p>
+  <p class="lede prose">A partir de ahí el temario se deriva de los requisitos y no de una lista de temas. Hace falta autorización porque un promotor no puede modificar el evento de otro. Hacen falta proyecciones porque pintar un mapa de 20.000 butacas cargando 20.000 entidades gestionadas agota la memoria. Hace falta idempotencia porque la pasarela puede entregar el mismo aviso dos veces. Y hace falta Testcontainers porque <b>el test de concurrencia pasa contra H2 aunque la implementación sea incorrecta</b>, y un test que no puede fallar no tiene valor diagnóstico.</p>
+  <p class="lede prose">El sistema toma su nombre del límite legal de ocupación de un recinto: una cantidad finita, verificable y de cumplimiento obligatorio. La referencia es deliberada, porque todos los problemas importantes de este catálogo se reducen a la misma forma — repartir un recurso finito entre más solicitantes de los que caben, sin pasarse ni una unidad. La butaca numerada y el aforo de pista son dos variantes del mismo problema, y reconocerlo es un objetivo de aprendizaje explícito (UC-14 y UC-16).</p>
+  <p class="lede prose">El dominio es además acotado. Un único servicio Spring Boot y una única base de datos relacional bastan para todos los casos de uso del catálogo; ningún requisito de aquí se resuelve mejor distribuyendo el sistema. La restricción es deliberada y se hace explícita para que la discusión arquitectónica no se salga del alcance de esta asignatura. La arquitectura es por capas; puertos y adaptadores son contenido de la asignatura siguiente.</p>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Diseño pedagógico</span></div>
+  <h2>La curva de dificultad es deliberada</h2>
+  <p class="lede prose">El catálogo está ordenado por dificultad creciente, no por orden narrativo del dominio. <b>Los primeros casos de uso son sencillos a propósito.</b> En un proyecto de estas dimensiones, una entrada dura durante las dos primeras semanas produce abandono: el equipo concluye que la asignatura es inabordable y reasigna su tiempo a otras materias antes de haber visto nada interesante.</p>
+  <p class="lede prose">El criterio de diseño es que <b>la curva esté en la dificultad del problema, no en la calidad de la solución</b>. Los casos de uso iniciales son sencillos <em>y correctos</em>: se resuelven con CRUD honesto porque su implementación correcta <em>es</em> CRUD, y no hay nada que desaprender después. No se pide en la semana 2 código que en la semana 4 haya que declarar erróneo, porque ese es precisamente el mecanismo que desmoraliza a un equipo.</p>
+  <div class="curve">
+    <div class="crow n0">
+      <div class="cl"><b>N0</b><span>Fundamentos</span></div>
+      <div class="cc"><b>CRUD honesto, sin reglas duras.</b><span>Operaciones sin contención sobre una sola fila y lecturas simples. El objetivo real no es el dominio sino la cadena de herramientas: proyecto, mapeo JPA básico, un test de cada tipo y el pipeline en verde. Debe poder completarse sin frustración.</span></div>
+      <div class="cr">UC-01 … UC-04<br>Sesiones 1–2</div>
+    </div>
+    <div class="crow n1">
+      <div class="cl"><b>N1</b><span>Reglas</span></div>
+      <div class="cc"><b>Lógica de negocio no trivial, todavía sin concurrencia.</b><span>Invariantes de agregado, máquinas de estado, cálculo monetario, autorización por propiedad del recurso. Se introduce la pregunta de dónde vive cada regla, y aparecen los primeros tests unitarios puros que valen la pena.</span></div>
+      <div class="cr">UC-05 … UC-09<br>Sesiones 2–3, 6</div>
+    </div>
+    <div class="crow n2">
+      <div class="cl"><b>N2</b><span>Eficiencia</span></div>
+      <div class="cc"><b>El mismo dominio, con volumen real.</b><span>Aquí es donde JPA deja de parecer sencillo: N+1, proyecciones, importación por lotes, paginación por clave y huella de memoria. El código de N0 y N1 sigue siendo válido; lo que cambia es el tamaño de los datos.</span></div>
+      <div class="cr">UC-10 … UC-13<br>Sesión 3</div>
+    </div>
+    <div class="crow n3">
+      <div class="cl"><b>N3</b><span>Concurrencia</span></div>
+      <div class="cc"><b>Corrección bajo acceso simultáneo y fallo externo.</b><span>Bloqueos, anomalías de aislamiento, expiración, idempotencia, integración con terceros poco fiables. Es el contenido que justifica la asignatura, y llega cuando el equipo ya tiene un sistema que funciona y herramientas para medirlo.</span></div>
+      <div class="cr">UC-14 … UC-23<br>Sesiones 4–7</div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="h">Cómo leer la numeración</div>
+    <p><b>Para el núcleo, el número del caso de uso <em>es</em> la curva.</b> UC-01 a UC-23 están ordenados por dificultad creciente y se pueden abordar en ese orden. A partir de UC-24 el catálogo recoge Extensión y Élite, cuya dificultad ya no es monótona porque su función no es formar la curva sino ampliarla.</p>
+    <p>Cada ficha lleva dos etiquetas independientes: el <b>nivel</b> (N0–N3), que indica cuánto cuesta, y el <b>alcance</b> (Núcleo, Extensión, Élite), que indica si es obligatorio. Son ortogonales: UC-24 es Extensión y de nivel bajo; UC-34 es Élite y de nivel alto.</p>
+  </div>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Profundidad</span></div>
+  <h2>Una vez a fondo, después ligero</h2>
+  <p class="lede prose">La curva de dificultad decide <em>cuándo</em> llega cada tema. Esta segunda regla decide <em>cuánto</em> se exige de él, y existe por una razón medida: al comparar este catálogo con el proyecto del curso pasado se comprobó que, con el mismo número de casos de uso, el esfuerzo estimado era en torno a <b>1,7 veces mayor</b>. La reducción de casos no compraba el margen que parecía, porque el coste se había mudado de la anchura a la profundidad.</p>
+  <p class="lede prose">El principio es que <b>cada técnica se demuestra una sola vez con rigor completo —medición, comparación y documento— y en los demás casos se aplica sin ceremonia</b>. Aprender a medir es lo que tiene valor; volver a medir por quinta vez es mecanografía. La tabla fija dónde se paga el precio completo.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Técnica</th><th>Se exige a fondo en</th><th>En los demás casos</th></tr></thead>
+      <tbody>
+        <tr><td class="lab">Comparar implementaciones alternativas midiendo</td><td class="refs">UC-11 · N+1 medido</td><td class="ev">Dos implementaciones —la ingenua y la corregida—, que es lo que demuestra el punto. La variante con <code>@EntityGraph</code> se analiza por escrito. En ningún otro caso se pide comparativa: la de estrategias de concurrencia es material de la asignatura siguiente.</td></tr>
+        <tr><td class="lab">Cuaderno de rendimiento con plan de <code>EXPLAIN</code></td><td class="refs">UC-10 · UC-11 · UC-14</td><td class="ev">Tres entradas obligatorias, no una por optimización. En UC-12 y UC-13 se mide, pero basta el número de sentencias que ya devuelve el test: sin plan pegado y sin ficha.</td></tr>
+        <tr><td class="lab">Presupuesto de sentencias verificado en el pipeline</td><td class="refs">UC-11 · UC-12 · UC-13 · UC-14 · UC-22</td><td class="ev">Cinco endpoints, no todos. Con cinco la red de regresión ya funciona; instrumentar treinta es administración, no aprendizaje.</td></tr>
+        <tr><td class="lab">Prueba de carga ejecutada por el equipo</td><td class="refs">UC-14 · UC-16</td><td class="ev">Dos ejecuciones. El agotamiento del pool de UC-19 pasa a <b>demostración del profesorado</b> en el taller de la sesión 7: instruye igual y cuesta cero horas de equipo. El p95 de puerta de UC-22 queda opcional.</td></tr>
+        <tr><td class="lab">Niveles de prueba por caso de uso</td><td class="refs">Uno obligatorio por ficha</td><td class="ev">En cada ficha, <b>el primer nivel listado es el obligatorio</b> —el que verifica la propiedad característica del caso— y los siguientes son recomendados. Es el recorte de mayor efecto: el catálogo se leía como sesenta pruebas exigidas y son veintitrés.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <div class="h">Efecto sobre el presupuesto</div>
+    <p>El recorte <b>reduce el coste del núcleo en torno a un 20 %</b> sin eliminar ningún caso de uso ni ningún resultado de aprendizaje. Es una comparación entre dos versiones del mismo catálogo, no una cifra absoluta de horas.</p>
+    <p><b>Si eso basta o no, hoy no se sabe.</b> La ficha oficial de la asignatura da el presupuesto con precisión —6 ECTS, 150 h por estudiante, 60 presenciales, lo que deja <b>600 horas-persona por equipo de cuatro</b>— pero <b>no hay ninguna medición del coste real de un caso de uso de este proyecto</b>, y sin ella cualquier afirmación sobre si cabe es una conjetura. La forma de resolverlo es barata y está en la lista de riesgos: <b>implementar el nivel N0 cronometrado</b> antes de la sesión 1. Da una cifra de horas por caso obtenida de datos propios, con la que extrapolar el resto con fundamento, y de paso verifica que la entrada suave funciona.</p>
+    <p><b>Y lo que no se toca en ningún caso:</b> UC-14 conserva su test de cincuenta hilos y UC-11 la medición del N+1. Son las dos demostraciones que justifican la asignatura; el recorte se hace alrededor de ellas, nunca sobre ellas.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Alcance</span></div>
+  <h2>Tres niveles de alcance, fijados antes de empezar</h2>
+  <p class="lede prose">El alcance es el riesgo dominante en un proyecto de este tamaño. Se controla no recortando la especificación sobre la marcha, sino <b>publicando el recorte por adelantado</b>: cada equipo sabe qué es obligatorio, qué sube nota y qué está disponible para quien va adelantado. Así se evita que un equipo implemente el mercado secundario mientras su mapa de butacas sigue defectuoso.</p>
+  <div class="grid3">
+    <div class="tier n">
+      <h3>Núcleo</h3>
+      <div class="count">23 casos · obligatorio</div>
+      <p>El recorrido completo de compra, correcto bajo concurrencia y con autorización operativa. Es el mínimo que aprueba y contiene todos los resultados de aprendizaje evaluables.</p>
+    </div>
+    <div class="tier e">
+      <h3>Extensión</h3>
+      <div class="count">11 casos · sube nota</div>
+      <p>Devoluciones, transferencias, webhooks, exportación masiva, limitación de peticiones, migraciones y mapeo avanzado de JPA. Cada uno reaplica a otro problema un patrón ya establecido en el núcleo.</p>
+    </div>
+    <div class="tier x">
+      <h3>Élite</h3>
+      <div class="count">5 casos · opcional</div>
+      <p>Mejor butaca disponible, lista de espera, reventa con tope, aforo en vivo y edición concurrente con bloqueo optimista. Para equipos que cierran el núcleo en la sesión 7.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Criterio de diseño</span></div>
+  <h2>Dónde va la lógica</h2>
+  <p class="lede prose">La pregunta se repite en cada caso de uso y conviene contestarla siempre igual. Los cinco ejemplos siguientes están tomados del propio catálogo y constituyen el criterio que se aplica en la revisión de arquitectura de la sesión 8.</p>
+  <div class="layer">
+    <div class="where">Entidad de dominio</div>
+    <div class="what"><b>Las transiciones de estado del evento.</b><span>«Un evento no se puede poner en venta sin inventario ni sin precio en todas sus zonas.» Eso vive en <code>Evento</code>, lanza una excepción de dominio y se verifica con un test unitario puro, sin contexto de Spring y sin base de datos. No es un condicional en el controlador.</span></div>
+  </div>
+  <div class="layer">
+    <div class="where">Objeto de valor</div>
+    <div class="what"><b>El cálculo del importe.</b><span><code>DesglosePrecio</code> encapsula precio base, gastos de gestión, impuestos y redondeo. Inmutable, sin dependencias, en <code>BigDecimal</code> y con moneda explícita. Es la contramedida estándar frente al servicio que crece sin límite.</span></div>
+  </div>
+  <div class="layer">
+    <div class="where">Política inyectada</div>
+    <div class="what"><b>La política de devolución.</b><span>Varía por evento y por jurisdicción. Interfaz declarada en el dominio, implementaciones seleccionadas por configuración. El argumento frente a un condicional se vuelve evidente al introducir la tercera política.</span></div>
+  </div>
+  <div class="layer">
+    <div class="where">Capa de servicio</div>
+    <div class="what"><b>La orquestación de la compra.</b><span>Valida la retención, calcula el importe, cobra, emite, publica el evento. <em>Secuencia y frontera transaccional, no reglas.</em> Una regla de negocio que aparezca en este nivel está mal colocada por definición.</span></div>
+  </div>
+  <div class="layer">
+    <div class="where">Capa de persistencia</div>
+    <div class="what"><b>El mecanismo de concurrencia.</b><span>El dominio afirma que una butaca la retiene exactamente una parte. Cómo se garantice —aquí, con un <code>UPDATE</code> condicional— se decide en el repositorio, y podría cambiarse sin reescribir ninguna regla de negocio.</span></div>
+  </div>
+  <div class="callout">
+    <div class="h">Dos reglas enunciadas por adelantado</div>
+    <p><b>Las entidades no salen de la capa de servicio.</b> Hacia fuera viajan DTO. Serializar una entidad gestionada con asociaciones perezosas dispara consultas <em>dentro del serializador</em>, produciendo un N+1 que no aparece en ninguna línea del código que el equipo escribió.</p>
+    <p><b>Y una matización sobre la capa de persistencia:</b> con entidades JPA anotadas, el modelo de dominio no es independiente de la base de datos. Cambiar el mecanismo de concurrencia rara vez es gratis: puede exigir columnas nuevas en la entidad. Lo que no cambia es la regla de negocio, solo su mecanismo de garantía. Conviene decirlo en clase antes de que lo descubra un alumno.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Estrategia de prueba</span></div>
+  <h2>Qué nivel de prueba corresponde a cada cosa</h2>
+  <p class="lede prose">Una lista de «esto es unitario y esto es integración» se lee y se ignora. Lo que funciona es un criterio de decisión aplicable sin consultar a nadie. Cada caso de uso del catálogo lleva marcados los niveles que le corresponden con estas mismas etiquetas.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Nivel</th><th>Se usa cuando</th><th>Herramientas</th><th>Coste</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tk u">Unitario</span></td>
+          <td class="ev">La regla se puede expresar <b>sin base de datos y sin Spring</b>. Reglas de dominio, máquinas de estado, cálculo monetario, algoritmos.<br><b>Corolario útil:</b> si necesitas simular un repositorio para probar una regla de negocio, la regla está en el sitio equivocado. El test unitario funciona aquí como detector de mala colocación de la lógica.</td>
+          <td class="ev">JUnit 5, AssertJ. Sin mocks salvo excepción justificada.</td>
+          <td class="ev">Milisegundos. La suite completa debe bajar de 2 s.</td>
+        </tr>
+        <tr>
+          <td><span class="tk s">Rodaja JPA</span></td>
+          <td class="ev">Lo que se prueba es el <b>mapeo o la consulta</b>: que la consulta devuelve lo que dice, que la proyección se materializa, que el número de sentencias es el esperado, que la restricción de unicidad existe de verdad.</td>
+          <td class="ev"><code>@DataJpaTest</code> con Testcontainers, no con H2. Estadísticas de Hibernate para contar sentencias.</td>
+          <td class="ev">Segundos. Contexto reducido, base de datos compartida entre tests.</td>
+        </tr>
+        <tr>
+          <td><span class="tk i">Integración</span></td>
+          <td class="ev">La propiedad <b>depende del motor de base de datos</b>: bloqueos, restricciones, transacciones, niveles de aislamiento, comportamiento concurrente. Es exactamente donde H2 miente y donde un test verde no significa nada si no se ejecuta contra PostgreSQL.</td>
+          <td class="ev"><code>@SpringBootTest</code> con Testcontainers; WireMock para la pasarela; <code>ExecutorService</code> y <code>CountDownLatch</code> para los casos concurrentes.</td>
+          <td class="ev">Decenas de segundos. Es el nivel más caro y el más necesario aquí.</td>
+        </tr>
+        <tr>
+          <td><span class="tk e">Extremo a extremo</span></td>
+          <td class="ev">Lo que se prueba es el <b>contrato de cara al cliente</b>: códigos HTTP, autorización efectiva, forma del JSON, recorrido funcional completo de principio a fin.</td>
+          <td class="ev">REST Assured contra la aplicación arrancada, con el token real obtenido por el propio flujo de autenticación.</td>
+          <td class="ev">Minutos. Pocos y bien elegidos: tres recorridos, no treinta.</td>
+        </tr>
+        <tr>
+          <td><span class="tk c">Carga</span></td>
+          <td class="ev">La propiedad <b>solo existe bajo concurrencia o volumen</b> y no es expresable como aserción sobre una ejecución: sobreaforo, percentil 95, agotamiento del pool de conexiones, degradación de la paginación.</td>
+          <td class="ev">k6 con guion suministrado. El resultado es un informe con cifras, no un verde o rojo.</td>
+          <td class="ev">Ejecución manual o nocturna, nunca en cada <em>commit</em>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="h">La pirámide de este proyecto no es la del libro de texto</div>
+    <p>Conviene decirlo explícitamente porque el alumnado lo va a notar y va a pensar que lo está haciendo mal. <b>Un sistema de ticketing tiene una proporción de tests de integración anormalmente alta</b>, porque sus propiedades difíciles —unicidad, bloqueo, aislamiento, expiración— viven en la base de datos y no en el código Java. Un test unitario no puede demostrar que dos transacciones no se pisan.</p>
+    <p>La consecuencia práctica es que la suite es lenta y hay que gestionarlo: separar la ejecución rápida de la lenta en el pipeline, reutilizar el contenedor entre clases y no crear un contexto de Spring por test. Es un problema de ingeniería real y merece tratarse como tal en la sesión 8, en lugar de fingir que la pirámide sale equilibrada.</p>
+  </div>
+
+  <div class="callout">
+    <div class="h">Especificación en Gherkin, ejecución en JUnit</div>
+    <p>Los casos de uso funcionales se especifican en <b>Gherkin</b> —escenarios <em>Dado / Cuando / Entonces</em>— y se ejecutan como <b>JUnit 5 sin Cucumber</b>, usando <code>@Nested</code> y <code>@DisplayName</code> para reproducir la estructura del escenario en el informe de tests. Cucumber existe sobre todo para que una persona no técnica lea y escriba los <code>.feature</code>; aquí no hay ese lector, así que su indirección no compensa. El vínculo entre escenario y test es una convención de nombres, y el escalón siguiente, si algún día interesa, es JGiven.</p>
+    <p><b>Y una limitación que se documenta como decisión, no como carencia:</b> Gherkin no tiene vocabulario para la simultaneidad. «Cincuenta clientes piden la misma butaca a la vez» se puede escribir, pero entonces toda la ingeniería interesante queda escondida dentro de la definición del paso, que es justo lo que se quiere mostrar. <b>Los tests de concurrencia se escriben en JUnit plano.</b> La sección de ejemplos desarrolla los tres casos.</p>
+  </div>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Catálogo</span></div>
+  <h2>Treinta y nueve casos de uso ordenados por dificultad</h2>
+  <p class="lede prose">Cada ficha del núcleo indica qué se trabaja a nivel de dominio, qué se trabaja a nivel técnico y con qué nivel de prueba se verifica. <b>No se publican estimaciones de horas por bloque</b>: no hay ninguna medición del coste real de un caso de uso de este proyecto, y una cifra inventada sería peor que ninguna. El plan para obtenerla está en el apartado de profundidad.</p>
+
+  <div class="module">
+    <div class="modhead"><span class="id">N0</span><h3>Fundamentos</h3><span class="budget">4 casos · sesiones 1–2</span></div>
+    <p class="modnote">Bloque deliberadamente sencillo. Ningún caso de uso de este nivel tiene contención, invariantes cruzadas ni volumen. El objetivo real no es el dominio sino que al final de la sesión 2 el equipo tenga un sistema que arranca, persiste, se autentica, se prueba en los tres niveles y pasa el pipeline. Un equipo que aquí se atasca no llegará a la sesión 4, así que el profesorado debe intervenir de inmediato.</p>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-01</span><h4>Alta, consulta y modificación de recintos</h4><span class="lvl l0">N0</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Gestión del catálogo de recintos: nombre, dirección, ciudad, aforo total declarado y datos de contacto. Alta, consulta, listado y modificación. CRUD sin adornos, y es correcto que lo sea.</p>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li>Primera entidad del sistema y primera decisión de identidad: identificador técnico frente a identificador de negocio.</li>
+            <li>Validación de campos en la frontera con Bean Validation. Es lo único que hay aquí, y conviene decirlo, para que la diferencia con una invariante de negocio se vea cuando aparezca la primera en UC-05.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Mapeo JPA mínimo: <code>@Entity</code>, <code>@Id</code>, columnas simples. La dirección son cuatro columnas planas. Nada de <code>@Embeddable</code>, nada de objetos de valor y nada de mapeos compuestos: eso llega cuando haga falta y hay un caso de uso dedicado (UC-38).</li>
+            <li>Estructura por capas: controlador, servicio, repositorio, modelo. Y la primera aplicación de la regla de que la entidad no cruza la frontera del servicio.</li>
+            <li>Códigos HTTP correctos: <code>201</code> con <code>Location</code>, <code>404</code>, <code>400</code> con cuerpo de error estructurado. Manejador global de excepciones.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span>Que la entidad persiste y se recupera completa, y que la restricción de unicidad del nombre existe realmente en la base de datos y no solo en el código.</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>Conversión entidad ↔ DTO y validación de campos. Poco más: aquí todavía no hay reglas que merezcan un test unitario, y decirlo en voz alta evita que el equipo escriba tests unitarios ceremoniales sin valor.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>El recorrido completo de alta y consulta. Es el primer test E2E del proyecto y sirve de plantilla para todos los demás.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-02</span><h4>Alta de eventos en borrador</h4><span class="lvl l0">N0</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Un promotor crea un evento en estado borrador: título, descripción, género, recinto asociado y fecha prevista. Todavía no se publica ni tiene inventario ni precios.</p>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li>Primera relación entre agregados: el evento referencia un recinto. Buen momento para introducir que se referencia <b>por identificador</b> y no por objeto, y por qué eso importará mucho en UC-07.</li>
+            <li>Aparece el estado <code>BORRADOR</code> como simple campo. Todavía no es una máquina de estados; en UC-06 se convertirá en una, y ese contraste es intencionado.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><code>@ManyToOne</code> con carga <code>LAZY</code> explícita. Basta con la regla práctica —«las asociaciones se declaran perezosas»— sin entrar todavía en por qué; el porqué se demuestra con datos en UC-11.</li>
+            <li>DTO de entrada distinto del DTO de salida. Aquí se planta la semilla del problema de asignación masiva que se explotará en UC-09.</li>
+            <li>Paginación básica con <code>Pageable</code> en el listado del promotor.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span>Que el evento se guarda con su recinto asociado y se recupera correctamente. Sin conteo de sentencias todavía: esa herramienta se introduce en N2, cuando existe un problema que la justifique.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Crear evento con recinto inexistente devuelve <code>404</code>, no <code>500</code>.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-03</span><h4>Catálogo público: listado y detalle</h4><span class="lvl l0">N0</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Versión inicial del catálogo de cara al público: listado paginado de eventos publicados con filtro por ciudad y por rango de fechas, y página de detalle. Sin disponibilidad, sin precio mínimo y sin optimizar.</p>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li>Distinción entre la vista del promotor y la vista pública sobre la misma entidad: no se expone lo mismo a cada una. Es la primera aparición del concepto de proyección, todavía sin nombre técnico.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Consultas derivadas del nombre del método, que para este listado bastan. <code>@Query</code> solo si hace falta.</li>
+            <li>Los filtros opcionales se resuelven a mano y se deja constancia de que la solución no escala. Cuando el equipo lo note por sí mismo, existe UC-38 para hacerlo bien.</li>
+            <li><b>Deuda técnica deliberada.</b> Esta implementación tendrá un N+1 y se dejará así a propósito. En UC-11 se mide y se corrige. Que el equipo escriba primero la versión ingenua <em>sabiendo que lo es</em> y la mejore después con datos es mejor pedagogía que prohibírsela desde el principio.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span>Que los filtros combinados devuelven el conjunto correcto, incluidos los límites del rango de fechas.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Paginación coherente: total de elementos, número de páginas y que un evento en borrador no aparece nunca en el catálogo público.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-04</span><h4>Registro, inicio de sesión y endpoint protegido</h4><span class="lvl l0">N0</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Versión mínima de seguridad: alta de cuenta, inicio de sesión que devuelve un JWT de acceso, y endpoints que exigen estar autenticado. Sin refresco, sin rotación y sin autorización fina; todo eso llega en UC-09 y UC-23.</p>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li>La cuenta como entidad, y el rol como atributo. Se introducen ya los cinco roles del sistema aunque solo se use uno, para que el modelo no haya que rehacerlo.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><code>SecurityFilterChain</code>, sesión sin estado, filtro de autenticación por JWT.</li>
+            <li>Hash de contraseña con BCrypt y factor de coste razonado. Una contraseña en claro en la base de datos, aunque sea un instante, suspende el apartado.</li>
+            <li>Cómo se prueba un endpoint protegido sin desactivar la seguridad en los tests, que es lo que hace todo el mundo la primera vez.</li>
+            <li><b>Fraccionamiento deliberado:</b> este caso de uso es sencillo porque solo cubre el camino feliz. La parte difícil de JWT —revocación, rotación, detección de reutilización— se separa en UC-23 precisamente para no cargar la semana 2.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Cadena de filtros completa: sin token da <code>401</code>, con token caducado da <code>401</code>, con token válido da <code>200</code>.</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>Emisión y verificación del token: claims, caducidad, firma inválida.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Registro, inicio de sesión y uso del token obtenido contra un endpoint real. A partir de aquí, todos los E2E del proyecto se autentican así.</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="module">
+    <div class="modhead"><span class="id">N1</span><h3>Reglas de negocio</h3><span class="budget">5 casos · sesiones 2–3 y 6</span></div>
+    <p class="modnote">Primer bloque con lógica que merece defenderse. Sigue sin haber concurrencia ni volumen: los datos son pequeños y las operaciones no compiten entre sí. Lo que cambia es que ahora hay invariantes, y por tanto aparece por primera vez la pregunta de dónde vive cada regla y el primer test unitario que vale la pena escribir.</p>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-05</span><h4>Zonas, precios y tarifas</h4><span class="lvl l1">N1</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">El recinto se divide en zonas —Pista, Grada A, Palco— y cada zona lleva precio para cada tarifa: general, reducida, menor de 12, accesible.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li><b>Invariante:</b> toda butaca del inventario queda cubierta por exactamente una zona con precio. Si no, el evento no se puede poner en venta.</li>
+            <li>Los importes se guardan en unidades menores con moneda explícita, nunca en coma flotante.</li>
+            <li>La tarifa reducida exige justificante en puerta, lo que debe quedar registrado en la entrada.</li>
+          </ul>
+        </div>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li><b>Primer objeto de valor con lógica propia:</b> <code>Dinero</code> sobre <code>BigDecimal</code> con moneda, inmutable, con suma, multiplicación por cantidad y redondeo explícito. La primera aparición de <code>double precio</code> es la ocasión para demostrar el error de representación en coma flotante binaria.</li>
+            <li><b>Primera invariante de agregado real</b>, y con ella la pregunta de quién la comprueba y cuándo. La respuesta —el propio agregado, al intentar publicar— es la que estructura UC-06.</li>
+            <li>Distinción entre validación de formato (Bean Validation, frontera) e invariante de negocio (dominio, siempre). El contraste con UC-01 es el que hace visible la diferencia.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Mapeo de un objeto de valor monetario: dos columnas, importe y moneda. La zona es también una columna de la butaca y no una tabla: el conjunto de zonas de un recinto es pequeño y estable, y una tabla de tres filas no se gana su sitio.</li>
+            <li>Verificación de la invariante mediante <b>consulta de agregación</b>, no iterando en Java. El coste de hacerlo mal aún no se nota con datos pequeños; se notará en UC-10, y ese es el momento de recordar esta decisión.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span><b>El primer test unitario con valor real del proyecto.</b> Aritmética de <code>Dinero</code>: suma de importes en la misma moneda, rechazo de monedas distintas, redondeo en los límites, multiplicación por cantidad. Sin Spring, sin base de datos, milisegundos.</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span>Que la consulta de cobertura detecta una butaca huérfana y se resuelve en una sola sentencia.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-06</span><h4>Publicación del evento como máquina de estados</h4><span class="lvl l1">N1</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Borrador → Programado → En venta → Agotado → Celebrado, con ramas de Cancelado y Aplazado. No todas las transiciones son legales y ninguna es trivialmente reversible.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>Publicar exige recinto, fecha futura, inventario generado, zonas con precio y un promotor solicitante que sea el propietario.</li>
+            <li>Cancelado es terminal.</li>
+            <li>Aplazar conserva las entradas; cancelar las reembolsa (UC-29).</li>
+          </ul>
+        </div>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li><b>El caso de uso de referencia de todo el documento sobre dónde va la lógica.</b> La máquina de estados pertenece a la entidad, no al servicio y desde luego no al controlador. Una transición ilegal lanza una excepción de dominio con nombre propio, no devuelve <code>false</code>.</li>
+            <li>El estado deja de ser un campo (UC-02) y pasa a ser comportamiento. El contraste entre las dos versiones es material de clase.</li>
+            <li>Invariantes de publicación como precondición del agregado, apoyándose en la cobertura de precios de UC-05.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Enumerado persistido como <code>STRING</code> y no como <code>ORDINAL</code>, con la explicación de qué pasa el día que alguien reordena el enumerado.</li>
+            <li>Traducción de excepción de dominio a código HTTP en el manejador global, sin que el dominio conozca HTTP.</li>
+            <li>Test parametrizado sobre la matriz completa de transiciones, que es donde JUnit 5 empieza a lucir.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span><b>Prácticamente todo.</b> Matriz completa de transiciones legales e ilegales como test parametrizado, más las precondiciones de publicación. Sin contexto de Spring y sin base de datos, en milisegundos. Es el caso de uso que demuestra que un dominio bien colocado se prueba barato.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Un único recorrido: publicar un evento incompleto devuelve <code>409</code> con un mensaje que identifica la invariante incumplida.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-07</span><h4>Programación de funciones y generación de inventario</h4><span class="lvl l1">N1</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Un evento se celebra en una o varias funciones, cada una con estado de butacas propio: la fila 7 butaca 14 puede estar vendida el viernes y libre el sábado. Al programar una función se materializa su inventario a partir del mapa del recinto. En este nivel, con un recinto pequeño.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>Se pueden inhabilitar butacas por razones de producción: mesa de sonido, escenario central.</li>
+            <li>Dos funciones de la misma sala pueden tener configuraciones distintas.</li>
+          </ul>
+        </div>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li><b>Decisión de modelado con consecuencias medibles:</b> estado de la butaca en la butaca física o en una tabla de inventario por función. La segunda función resuelve la discusión sola.</li>
+            <li><b>Fronteras de agregado.</b> Si la función contiene sus butacas como colección, el agregado es correcto de libro e inviable en la práctica: vender una butaca cargaría el agregado entero. La respuesta profesional son agregados pequeños que se referencian por identificador. Es la tensión central entre dominio rico y JPA, y conviene darla explícitamente en clase.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Generación del inventario con <code>INSERT … SELECT</code> ejecutado en la base de datos frente a iteración en Java. Con un recinto pequeño ambas funcionan; medir las dos ahora prepara UC-10, donde solo una sobrevive.</li>
+            <li><code>@OneToMany</code> y por qué aquí <b>no</b> se usa: la relación existe en el modelo mental pero no se mapea como colección.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span>Que programar dos funciones del mismo evento produce inventarios independientes; que inhabilitar una butaca en una no afecta a la otra.</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Que programar una función no carga el inventario completo en memoria, verificado por número de sentencias y por tiempo.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-08</span><h4>Cálculo del importe: tarifas, gastos e impuestos</h4><span class="lvl l1">N1</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Precio base por butaca y tarifa, más gastos de gestión expresados como porcentaje con mínimo y máximo, más impuestos, con desglose auditable línea a línea. El total de la factura debe cuadrar a la unidad menor.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>Los gastos de gestión son por entrada, no por pedido.</li>
+            <li>El desglose se congela en el pedido: una subida posterior de gastos no altera una factura anterior.</li>
+          </ul>
+        </div>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li><b>El ejemplo canónico de lógica que pertenece al dominio.</b> <code>DesglosePrecio</code> es un objeto de valor inmutable construido a partir de <code>Dinero</code> (UC-05). Toda la aritmética vive ahí y ninguna en el servicio.</li>
+            <li>Composición de objetos de valor: el desglose contiene líneas, cada línea contiene importes. Primera estructura de dominio con profundidad.</li>
+            <li><b>Reparto del resto:</b> distribuir un descuento de 10 € entre tres entradas da 3,33 tres veces y pierde un céntimo. La regla de reparto es una decisión de negocio que hay que tomar explícitamente y fijar con un test.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Redondeo declarado con <code>RoundingMode</code> y no heredado del comportamiento por defecto.</li>
+            <li>Persistencia del desglose congelado: se guarda el resultado, no la fórmula.</li>
+            <li>Test parametrizado sobre casos frontera, que es donde este caso de uso enseña más que cualquier explicación.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span><b>Exclusivamente unitario, y ese es el mensaje.</b> Descuento del 100 %, total cero, descuento indivisible entre tres entradas, gastos por debajo del mínimo, gastos por encima del máximo. Si algún caso de estos necesita base de datos para probarse, la lógica está mal colocada.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc star">
+      <div class="top"><span class="ucid">UC-09</span><h4>Autorización por rol y por propiedad del recurso</h4><span class="lvl l1">N1</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Cinco roles con intereses distintos: asistente, promotor, personal de recinto, personal de puerta y administración. Un promotor gestiona <em>sus</em> eventos; un asistente consulta <em>sus</em> pedidos.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>El personal de puerta valida entradas y no accede ni a datos personales ni a importes.</li>
+            <li>Un promotor no puede leer las ventas de otro promotor ni disponiendo de un identificador válido.</li>
+          </ul>
+        </div>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li>La propiedad del recurso es una relación de dominio, no un detalle de seguridad: el evento <em>pertenece</em> a un promotor y eso forma parte del modelo. El promotor no es una entidad aparte: es una cuenta con rol de promotor y nombre comercial, ambos columnas de <code>cuenta</code>.</li>
+            <li>Consecuencia de diseño: la autorización por propiedad se expresa mejor como <b>condición de la consulta</b> que como comprobación posterior. Filtrar por propietario hace el defecto irrepresentable en lugar de vigilado.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><b>Referencia directa insegura a objetos.</b> <code>GET /pedidos/42</code> con el token válido de otra persona. Es el defecto de autorización más frecuente en sistemas reales y aparece sin provocación en la mayoría de proyectos de estudiantes.</li>
+            <li><b>Asignación masiva:</b> un DTO de entrada que acepta el campo <code>rol</code> o <code>estado</code> es escalada de privilegios en una línea. Conecta directamente con la separación de DTO introducida en UC-02.</li>
+            <li>Escalada horizontal frente a vertical, y por qué la horizontal es la que sobrevive a la revisión de código.</li>
+            <li><code>@PreAuthorize</code> frente a filtrado en el repositorio: cuándo cada uno y por qué el segundo es preferible.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span><b>Matriz completa rol × endpoint</b>: cada rol contra cada recurso que no le pertenece. Es tedioso de escribir y es exactamente el tipo de test que hay que exigir, porque es el que encuentra los agujeros.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Dos promotores reales, cada uno con su evento, comprobando aislamiento efectivo a través de la API completa.</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="module">
+    <div class="modhead"><span class="id">N2</span><h3>Eficiencia y volumen</h3><span class="budget">4 casos · sesión 3</span></div>
+    <p class="modnote">El bloque donde JPA deja de parecer sencillo. No se introduce ni un concepto nuevo de dominio: son los mismos casos de uso de N0 y N1 sometidos a datos reales. El código anterior no se tira, se mide y se corrige — que es exactamente la experiencia profesional que se quiere reproducir. Es también el bloque que este curso ha decidido profundizar.</p>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-10</span><h4>Importación masiva del mapa de sala</h4><span class="lvl l2">N2</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">El personal del recinto sube un fichero con la butaca física: sector, fila, número y atributos como visibilidad reducida, plaza accesible o asiento de acompañante. Un pabellón mediano son 8.000 butacas; un estadio, 55.000. Es UC-01 y UC-07 con el volumen que tienen en producción.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>Sector, fila y número son conjuntamente únicos dentro del recinto.</li>
+            <li>Una plaza accesible arrastra siempre su asiento de acompañante.</li>
+            <li>Reimportar el mismo fichero actualiza las filas existentes, no las duplica.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Agrupamiento de sentencias en la práctica: <code>hibernate.jdbc.batch_size</code>, y la observación de que <code>GenerationType.IDENTITY</code> <b>lo desactiva por completo</b>, obligando a una secuencia con optimizador <em>pooled</em>. Es un descubrimiento que sorprende siempre.</li>
+            <li><code>flush()</code> y <code>clear()</code> periódicos: sin ellos el contexto de persistencia crece de forma monótona hasta agotar la memoria. Aquí se explica de una vez qué es el contexto de persistencia y por qué retiene todo lo que ha visto.</li>
+            <li>Transacción única larga frente a transacciones troceadas, evaluado contra el caso de fallo en la butaca 19.000.</li>
+            <li><b>El N+1 de escritura</b>, que casi nunca se enseña: <code>save()</code> dentro de un bucle son 20.000 viajes de ida y vuelta. Es el mismo defecto que el de lectura, invertido.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>20.000 butacas importadas por debajo de 10 s con cota de memoria declarada, y una segunda importación que deja el recuento de filas intacto.</span></div>
+          <div class="trow"><span class="tk c">Carga</span><span>No aplica: el volumen ya está en el propio test de integración. Señalarlo evita que el equipo monte un k6 innecesario.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc star">
+      <div class="top"><span class="ucid">UC-11</span><h4>Catálogo eficiente: N+1 y proyecciones</h4><span class="lvl l2">N2</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Se retoma el catálogo de UC-03 y se le añade lo que faltaba: recinto, imagen, precio mínimo e indicador de disponibilidad, sobre 300 eventos y funciones de 20.000 butacas. Funcionalmente es la pantalla más inocente del sistema y la que más fiablemente degrada la base de datos.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>El indicador de disponibilidad es cualitativo: disponible, quedan pocas, agotado. No se publica el número exacto.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Veinte eventos que arrastran recinto, ciudad, imagen y tramos de precio: <b>61 sentencias donde deberían ser 2</b>. Y la distinción que importa profesionalmente: esto no se detecta leyendo el registro de SQL, se <b>mide</b> con estadísticas de Hibernate y datasource-proxy. La corrección viene después de la medición: proyección DTO, <code>@EntityGraph</code> o <code>join fetch</code>.</li>
+            <li>La trampa siguiente: paginación combinada con <code>join fetch</code> hace que Hibernate pagine en memoria (<code>HHH90003004</code>), trayendo 8.000 filas para devolver 20. Se resuelve con dos consultas o con <code>@BatchSize</code>.</li>
+            <li>Y la de después: <code>MultipleBagFetchException</code> al traer dos colecciones a la vez.</li>
+            <li>La disponibilidad no se calcula con <code>COUNT(*)</code> sobre 20.000 butacas por cada evento listado: contador desnormalizado, y con él la pregunta de cuándo se actualiza y cómo se detecta la divergencia.</li>
+            <li><b>La paginación por <code>OFFSET</code> falla de dos maneras distintas.</b> En la página 500 el motor descarta 10.000 filas para devolver 20; y bajo inserción concurrente —que este dominio garantiza— se saltan o repiten filas entre páginas. La paginación por clave resuelve las dos.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span><b>Test de conteo de sentencias</b>: el listado de 20 eventos se resuelve en 3 sentencias o menos. Integrado en el pipeline, convierte una regresión de N+1 en un build rojo. Ojo con la caché de primer nivel, que falsea el conteo si no se limpia el contexto entre operaciones.</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span><b>Dos implementaciones medidas</b> del mismo endpoint —entidades perezosas y proyección DTO— comparadas en sentencias, latencia y memoria, con su entrada en el cuaderno de rendimiento. La variante con <code>@EntityGraph</code> se analiza por escrito sin implementarla: la comparativa de tres se paga una sola vez en el curso, y es en UC-14.</span></div>
+          <div class="trow"><span class="tk c">Carga</span><span><em>Recomendada.</em> Degradación de la paginación: comparar la página 1 con la página 500 antes y después de pasar a paginación por clave.</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>Prácticamente ninguno, y merece comentarse: <b>este caso de uso no tiene reglas de negocio</b>. Es un ejercicio de eficiencia puro, y forzar tests unitarios aquí produce ceremonia sin valor.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-12</span><h4>Mapa de butacas de una función</h4><span class="lvl l2">N2</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Devolver el estado de cada butaca de la función —libre, retenida, vendida, inhabilitada— para pintar el mapa. Endpoint muy solicitado sobre un conjunto de resultados grande.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>No se revela quién retiene una butaca ni cuánto tiempo le queda.</li>
+            <li>Una retención caducada debe verse libre aunque el barrido todavía no haya pasado.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Cargar 20.000 entidades gestionadas para pintar un mapa es el defecto de memoria canónico del proyecto. Se necesita proyección plana, opcionalmente agregada por sector.</li>
+            <li><code>@Transactional(readOnly = true)</code> y por qué no es cosmético: Hibernate omite el <em>dirty checking</em> sobre el conjunto devuelto.</li>
+            <li>Caché de vida corta y la pregunta difícil que trae: la condición de invalidación que evita mostrar como libres butacas ya vendidas.</li>
+            <li>La <b>caché de primer nivel</b>, explicada de una vez: por qué dos <code>findById</code> seguidos emiten una sola sentencia. La de segundo nivel se excluye deliberadamente: con inventario que cambia continuamente es contraproducente, y justificar una exclusión es también criterio de ingeniería.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Huella de memoria y latencia contra una función de 20.000 butacas, con umbral declarado y presupuesto de sentencias en el pipeline. <b>Sin entrada en el cuaderno de rendimiento:</b> el número que devuelve el test ya es la evidencia.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Que la respuesta no contiene en ningún caso el identificador de quien retiene la butaca. Es un test de fuga de información, y conviene que exista antes de UC-14.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-13</span><h4>Panel de ventas del promotor</h4><span class="lvl l2">N2</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Ingresos por día, ocupación por zona, ritmo de venta desde la apertura, comparación entre funciones. Sobre un juego de datos de 40.000 pedidos suministrado por el profesorado.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><b>Agregar en SQL, no en código de aplicación.</b> Traerse los pedidos y sumarlos con <em>streams</em> es el enfoque intuitivo, rinde aceptablemente contra los datos de prueba y falla con 40.000 pedidos.</li>
+            <li>Proyecciones a medida, transacciones de solo lectura, y tabla de resumen o vista materializada cuando el cálculo en vivo deja de ser viable.</li>
+            <li>El N+1 reaparece con otra forma, lo que da un indicador de si el equipo generalizó la lección de UC-11 o aplicó un parche local.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk s">Rodaja JPA</span><span>Conteo de sentencias y latencia contra el juego de 40.000 pedidos, con presupuesto declarado por endpoint. <b>Sin entrada en el cuaderno:</b> aquí la técnica ya está aprendida y solo se aplica.</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>Las reglas de cálculo del ritmo de venta y de la ocupación porcentual, que sí son dominio y sí se pueden aislar.</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="module">
+    <div class="modhead"><span class="id">N3</span><h3>Concurrencia y fiabilidad</h3><span class="budget">10 casos · sesiones 4–7</span></div>
+    <p class="modnote">El contenido que justifica la asignatura. Llega en la sesión 4, cuando el equipo ya tiene un sistema que funciona, datos realistas y herramientas para medir — es decir, cuando puede apreciar la diferencia entre una implementación correcta y una que solo lo parece. Ningún equipo debería pasar de la sesión 4 sin UC-14 cerrado.</p>
+    <div class="callout" style="margin-top:0">
+      <div class="h">Un solo mecanismo, y dicho en voz alta</div>
+      <p>El núcleo enseña <b>una única forma de resolver la concurrencia: el <code>UPDATE</code> condicional</b>, aplicada a los tres casos de la familia — butaca numerada, aforo general y límite por persona. No es una simplificación por falta de tiempo: es que reconocer que los tres son el mismo problema con tres disfraces vale más que conocer tres mecanismos sueltos.</p>
+      <p><b>Conviene decirle al alumnado que hay otras.</b> El bloqueo optimista, el pesimista, los niveles de aislamiento y la comparación medida entre ellos son material de la asignatura siguiente, donde además la arquitectura hexagonal permitirá cambiar de mecanismo sin tocar el dominio. Lo mismo vale para la estrategia de indexación, que también sale del núcleo por la misma razón. Enunciarlo evita que nadie piense que esto es la versión de juguete, y convierte una restricción de alcance en un plan.</p>
+      <p>La única excepción es <b>UC-39</b>, en Élite, que introduce el bloqueo optimista para un problema <em>distinto</em> —la edición larga de un formulario— y no como alternativa a la retención de butacas.</p>
+    </div>
+
+    <article class="uc star">
+      <div class="top"><span class="ucid">UC-14</span><h4>Retención temporal de butacas</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Un cliente selecciona tres butacas y se le reservan diez minutos para completar el pago. Es el caso de uso que define el proyecto: varios cientos de clientes emitiendo la misma petición sobre las mismas butacas en el instante en que abre la venta general.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>Todas las butacas pedidas deben estar libres o la operación falla entera: no se permiten retenciones parciales.</li>
+            <li>La retención caduca a los diez minutos de su creación si no se paga.</li>
+            <li>No puede quedar una butaca aislada entre dos ocupadas donde la sala aplique esa política.</li>
+            <li>Se respeta el límite de entradas por persona y función (UC-15).</li>
+          </ul>
+        </div>
+        <div class="blk dom">
+          <div class="h">Trabajo de dominio</div>
+          <ul>
+            <li><code>Retencion</code> como agregado propio, con su instante de creación, su caducidad y su titular. La decisión de que sea agregado y no atributo de la butaca condiciona todo el módulo.</li>
+            <li>La invariante que el dominio enuncia —«una butaca la retiene exactamente una parte»— frente al mecanismo que la garantiza, que es de la capa de persistencia. Es la aplicación práctica del criterio de las cinco capas.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico — el <code>UPDATE</code> condicional</div>
+          <ul>
+            <li>El defecto de la implementación intuitiva es un <b>lost update</b>: la secuencia comprobar-y-actuar en código de aplicación no tiene ninguna garantía entre la lectura y la escritura. El <code>if</code> de Java no sostiene ningún bloqueo, así que entre comprobar y actuar no hay nada.</li>
+            <li><b>La solución es una sola sentencia:</b> <code>UPDATE inventario_butaca SET estado='RETENIDA', retencion_id=:r WHERE id IN (…) AND estado='LIBRE'</code>, decidiendo por el número de filas afectadas. Si afecta a tres, las tres butacas son del cliente; si afecta a menos, la operación entera se rechaza.</li>
+            <li><b>Y por qué funciona, que es la clase de verdad.</b> En PostgreSQL, bajo <em>read committed</em>, cuando un <code>UPDATE</code> encuentra una fila que otra transacción está modificando, espera a que aquella termine y entonces <b>vuelve a leer la fila y reevalúa el <code>WHERE</code></b>: no trabaja sobre la instantánea antigua. Por eso la segunda petición ve <code>estado='RETENIDA'</code> y afecta a cero filas. No es magia ni es un truco: es una garantía del motor, y es exactamente la que el <code>if</code> en Java no tiene.</li>
+            <li><b>La garantía final la da la base de datos y no el código.</b> Aquí la refuerza la propia columna <code>retencion_id</code>, que solo admite un valor: no existe forma de escribir dos retenciones sobre una butaca. La invariante pasa de estar <em>vigilada</em> a ser <em>estructuralmente imposible</em> de violar, y esa es siempre la mejor versión de una invariante.</li>
+            <li><b>Un solo mecanismo, tres aplicaciones.</b> El mismo patrón resuelve la butaca numerada (aquí), el aforo general (UC-16) y el límite por persona (UC-15). Reconocer que son el mismo problema con tres disfraces es el objetivo de aprendizaje del módulo, y vale más que conocer tres mecanismos distintos.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span><b>Cincuenta hilos disputando una butaca: exactamente un éxito y cuarenta y nueve rechazos limpios</b>, con <code>CountDownLatch</code> y <code>ExecutorService</code>, contra PostgreSQL bajo Testcontainers. El mismo test pasa contra H2 con una implementación incorrecta: ese es el argumento para usar Testcontainers desde la sesión 1.</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>La política de butaca aislada, que sí es regla de dominio pura y se prueba sin base de datos.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Retener y consultar el mapa: las butacas aparecen como no disponibles para un segundo cliente.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc star">
+      <div class="top"><span class="ucid">UC-15</span><h4>Límite de entradas por persona y función</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Máximo seis entradas por persona y función, contando compras completadas más retenciones vivas. Es una regla antirreventa habitual en la industria.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>La comprobación está sujeta a su propia carrera: dos pestañas pidiendo cuatro entradas cada una superan ambas la validación y producen ocho. Encontrarlo después de haber resuelto UC-14 demuestra que la concurrencia no se aborda una vez y se cierra.</li>
+            <li><b>La anomalía tiene nombre y no es la de UC-14.</b> Esto es <em>write skew</em>: dos transacciones leen datos solapados, escriben filas disjuntas y violan conjuntamente una invariante que ninguna viola por separado. Merece nombrarse en clase aunque aquí no haga falta atacarlo por la vía del aislamiento.</li>
+            <li><b>Se resuelve con el mismo patrón de UC-14</b>, materializando la cuota en una fila que se pueda actualizar condicionalmente: <code>UPDATE cuota SET entradas = entradas + :n WHERE cliente_id=:c AND funcion_id=:f AND entradas + :n &lt;= 6</code>. Al condensar la comprobación y la escritura en una sentencia, la carrera desaparece sin tocar el nivel de aislamiento.</li>
+            <li>Es además una invariante que <b>cruza agregados</b> —vive entre pedidos y retenciones— y por eso hay que materializarla en una fila propia. Es un ejemplo real de cómo la necesidad de consistencia deforma el modelo de dominio.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Dos peticiones concurrentes de cuatro entradas contra un límite de seis: una pasa, otra se rechaza. Y la comprobación que cierra el círculo: implementar primero la versión con <code>if</code> en Java para verla fallar, y después la condicional.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-16</span><h4>Admisión general por cupo</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Pista de 5.000 plazas sin numerar. Un cliente pide cuatro. No hay fila que bloquear: hay un contador.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><code>UPDATE funcion SET aforo_reservado = aforo_reservado + :n WHERE id = :id AND aforo_total - aforo_reservado &gt;= :n</code>, decidiendo por filas afectadas. Una sola sentencia atómica, y sobre una columna de la propia función: el aforo general no necesita tabla propia.</li>
+            <li>La versión ingenua —leer, sumar en Java, escribir— debe implementarse primero y <b>demostrarse su sobreaforo en el informe de carga</b>. Emitir 5.130 entradas para un aforo de 5.000 es un resultado cuantificado, no una afirmación.</li>
+            <li>La generalización que sostiene el módulo: <b>el patrón correcto depende de la forma del inventario</b>. Butaca numerada es fila única protegida por restricción; aforo es contador protegido por el predicado del <code>UPDATE</code>.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk c">Carga</span><span>300 clientes concurrentes: entradas emitidas nunca supera el aforo. Este es el caso donde el test de carga <b>es</b> la verificación y no un complemento, porque la propiedad no existe fuera de la concurrencia.</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Versión acotada del anterior con 50 hilos, para que forme parte del pipeline.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc star">
+      <div class="top"><span class="ucid">UC-17</span><h4>Expiración de retenciones</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">La retención sin pagar caduca y la butaca vuelve al inventario. El requisito se parece a una tarea programada de cinco líneas y no lo es.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Expiración perezosa en lectura, barrido programado con <code>@Scheduled</code>, o ambas. Las alternativas se comparan, no se suponen.</li>
+            <li><b>El entrelazado que derrota a la mayoría de implementaciones:</b> el barrido libera la butaca en el mismo instante en que el cliente confirma el pago, produciendo un cobro sin entrada. La corrección exige que el pago revalide la retención dentro de la misma transacción, comprobando estado y versión.</li>
+            <li>El barrido no debe competir con los pagos en curso: <code>SKIP LOCKED</code> para saltar filas bloqueadas por una transacción de confirmación, y lotes acotados para no bloquear una fracción grande del inventario. Y la pregunta que suele omitirse: qué ocurre cuando un barrido tarda más que su propio intervalo — <code>fixedDelay</code> frente a <code>fixedRate</code>.</li>
+            <li><code>java.time.Clock</code> inyectado como dependencia. Sin él este caso de uso <b>no se puede probar</b> salvo esperando diez minutos reales.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Test que fuerza el entrelazado barrido-pago con un <code>Clock</code> controlado y afirma que no se pierde ni se duplica ninguna butaca. Es el test más difícil de escribir del proyecto y conviene que el profesorado lo tenga resuelto de antemano.</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>El cálculo de caducidad con reloj inyectado, incluidos los límites exactos del minuto diez.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-18</span><h4>Confirmación de compra idempotente</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">El cliente envía dos veces, o pierde la conexión y el navegador reintenta. Ni pedidos duplicados ni cobros duplicados son aceptables.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Cabecera <code>Idempotency-Key</code> generada por el cliente, guardada como <b>columna con restricción de unicidad en el propio pedido</b> —el segundo intento viola la restricción y ahí se detecta—, y decisión explícita sobre la respuesta al reintento: <b>la respuesta original y el código de estado original</b>, no un error. Se reconstruye leyendo el pedido que ya existe.</li>
+            <li>Comportamiento cuando el reintento llega mientras la primera petición sigue ejecutándose.</li>
+            <li>Periodo de retención de la clave, y tratamiento de una clave repetida presentada con un cuerpo distinto.</li>
+            <li>El mecanismo es estándar en sistemas de pago y rara vez se cubre en un grado.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Diez envíos concurrentes con una misma clave: un pedido, un cobro, diez respuestas idénticas.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc star">
+      <div class="top"><span class="ucid">UC-19</span><h4>Cobro contra pasarela externa</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Una pasarela simulada, suministrada preconfigurada por el profesorado para comportarse de forma adversa: latencia intermitente de ocho segundos, fallo intermitente y —el caso importante— una respuesta correcta que llega después de que la petición se haya dado por perdida.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>Ante fallo definitivo, las butacas retenidas se liberan.</li>
+            <li>Ante resultado indeterminado, el pedido queda marcado para conciliación, nunca cancelado por conjetura.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><b>El defecto habitual:</b> encerrar la llamada de red en <code>@Transactional</code>. La transacción permanece abierta durante toda la llamada, el pool de conexiones se agota y el rendimiento se desploma. Es observable en la prueba de carga y es una de las demostraciones más útiles de la asignatura.</li>
+            <li>Tiempos de espera configurados —nunca ilimitados—, reintento restringido a operaciones seguras de repetir, y compensación cuando ya no hay recuperación posible.</li>
+            <li>Estados intermedios explícitos en el pedido en lugar de un booleano <code>pagado</code>. El pago no es una tabla aparte: la referencia del proveedor, el estado y el número de intentos son columnas del propio pedido, porque la relación es de cero o uno y no hay que conservar histórico de intentos.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Suite con WireMock inyectando latencia, respuestas 5xx y réplicas tardías; ninguna butaca queda retenida indefinidamente y ningún cobro se duplica.</span></div>
+          <div class="trow"><span class="tk c">Carga</span><span><em>La ejecuta el profesorado, no el equipo.</em> Agotamiento del pool con la llamada de red dentro de la transacción y la misma prueba con la llamada fuera. Las dos cifras juntas son la lección, y se transmiten igual en el taller de la sesión 7 sin que cada equipo tenga que reproducirla.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-20</span><h4>Confirmación del pedido y emisión de entradas</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Con el cobro aceptado, las butacas pasan de retenidas a vendidas, se emiten entradas nominativas y se envía la confirmación.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><b>Efectos externos dentro de una transacción.</b> Un mensaje enviado antes del <em>commit</em> es una entrada entregada para un pedido que puede no existir. Se resuelve con <code>@TransactionalEventListener(AFTER_COMMIT)</code>.</li>
+            <li>El modo de fallo residual: si el proceso termina justo después del <em>commit</em>, el mensaje no se envía nunca. El patrón <em>outbox</em> lo cubre, y aquí es exactamente lo que parece: <b>una tabla más y una tarea programada dentro de la misma aplicación</b>.</li>
+            <li>Eventos de dominio de Spring como forma de desacoplar dos partes de la aplicación sin salir del proceso ni añadir infraestructura.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Fallo inducido después del cobro: no se emite nada. Y test de <em>outbox</em> con reinicio simulado: el mensaje pendiente se entrega al arrancar.</span></div>
+          <div class="trow"><span class="tk e">Extremo a extremo</span><span>Recorrido completo de compra hasta recibir la entrada. Es el E2E principal del proyecto.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-21</span><h4>Entrada con código verificable</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Cada entrada lleva un código QR que contiene un testigo firmado por el sistema: identificador de entrada, función e instante de emisión.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li>Un identificador secuencial en el QR permite falsificar entradas por enumeración. La credencial se autentica por firma, no por identificador.</li>
+            <li><b>Firmar no es cifrar</b>: el contenido del testigo es público. Qué se excluye —nombre, correo, importe— es una decisión deliberada.</li>
+            <li>Rotación de la clave de firma sin invalidar las entradas ya emitidas.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>Firma y verificación, incluida la manipulación de un byte del testigo y la rotación de clave con testigos antiguos todavía válidos.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-22</span><h4>Validación de entrada en puerta</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">El personal de acceso escanea el QR. Se verifica la firma, que la entrada es de esta función, que no se ha usado, que el evento no está cancelado y que estamos dentro de la ventana de acceso. Con 3.000 asistentes en unos veinte minutos.</p>
+        <div class="blk">
+          <div class="h">Reglas de negocio</div>
+          <ul>
+            <li>Una entrada se admite una sola vez. No hay reentrada salvo que el evento la permita.</li>
+            <li>La respuesta distingue «no válida» de «ya utilizada a las 20:14 en la puerta 3»: quien está en la puerta necesita saber qué decirle a la persona que tiene delante.</li>
+          </ul>
+        </div>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><b>Escaneos simultáneos de la misma credencial en dos puertas</b>, usando una captura de pantalla del QR. Se resuelve con <code>UPDATE … WHERE usada_en IS NULL</code> y filas afectadas: el patrón de UC-14 aplicado sin guía, lo que lo convierte en indicador de aprendizaje.</li>
+            <li>Latencia: la puerta exige respuesta por debajo de 200 ms. El índice único sobre el código viene ya en el esquema del semilla; lo que se trabaja aquí es el camino de lectura mínimo, no la estrategia de indexación.</li>
+            <li>Operación degradada sin conectividad: la firma se puede verificar en local, el uso previo no. El compromiso debe enunciarse y los duplicados conciliarse al recuperar la red.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Dos escaneos concurrentes de una credencial: una admisión y una respuesta de «ya utilizada» con hora y puerta.</span></div>
+          <div class="trow"><span class="tk c">Carga</span><span><em>Opcional.</em> 3.000 validaciones en veinte minutos con p95 por debajo de 200 ms. El requisito de latencia se defiende con el índice y el presupuesto de sentencias; medirlo bajo carga sube nota pero no es obligatorio.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="uc">
+      <div class="top"><span class="ucid">UC-23</span><h4>JWT avanzado: refresco, rotación y revocación</h4><span class="lvl l3">N3</span><span class="chip n">Núcleo</span></div>
+      <div class="perf"></div>
+      <div class="body split">
+        <p class="what">Continuación de UC-04, ahora con la parte difícil: testigo de acceso de vida corta y testigo de refresco de vida larga con rotación. El componente que todo el mundo cree dominar hasta que se plantea cómo se cierra una sesión.</p>
+        <div class="blk reto">
+          <div class="h">Trabajo técnico</div>
+          <ul>
+            <li><b>Un JWT no se puede revocar</b>; es una propiedad de la construcción. Si el testigo de acceso vale 24 horas, expulsar a alguien no es posible. Toda la arquitectura de acceso corto más refresco con estado se deriva de esa observación.</li>
+            <li>Rotación con <b>detección de reutilización</b>: la presentación de un refresco ya consumido indica compromiso, y se invalida la familia completa de testigos. Es un control estándar, barato de implementar y fácil de demostrar.</li>
+            <li>Almacenamiento en el cliente: cookie <code>HttpOnly</code> frente a <code>localStorage</code>, y qué ataque habilita cada opción.</li>
+            <li>Claims mínimos: incrustar el rol es cómodo hasta que hay que degradarlo.</li>
+            <li>Enumeración de cuentas y tiempos de respuesta que también filtran información.</li>
+          </ul>
+        </div>
+        <div class="tests">
+          <div class="h">Estrategia de prueba <span class="oblig">· el primer nivel es obligatorio</span></div>
+          <div class="trow"><span class="tk i">Integración</span><span>Reutilización de refresco: la familia queda invalidada y el acceso siguiente falla. Y que el registro responde igual exista o no la cuenta.</span></div>
+          <div class="trow"><span class="tk u">Unitario</span><span>Generación, rotación y caducidad de la familia de testigos con reloj inyectado.</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="module">
+    <div class="modhead"><span class="id">EXT</span><h3>Extensión y Élite</h3><span class="budget">≈ 60–80 h/equipo · fuera del núcleo</span></div>
+    <p class="modnote">A partir de aquí la dificultad ya no es monótona: la función de estos casos de uso no es formar la curva sino ampliarla. Se documentan de forma compacta a propósito, porque ningún equipo los abordará todos y el detalle solo hace falta cuando uno se elige. Cada ficha lleva su nivel para que el profesorado pueda recomendar el adecuado a cada equipo.</p>
+    <div class="grid2">
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-24</span><h4>Ventanas de venta y preventa</h4><span class="lvl l1">N1</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Códigos de preventa con cupo (club de fans, patrocinador, entidad bancaria), apertura de venta general en un instante determinado y cierre de taquilla dos horas antes.</p>
+          <p><span class="rl">Técnico:</span> <code>java.time.Clock</code> inyectado, sin el cual el caso no se puede probar salvo esperando; zona horaria del recinto frente a la del cliente; y las ventanas como columnas de la función, no como tabla. <span class="rl">Pruebas:</span> unitario con reloj adelantado.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-25</span><h4>Código de descuento con cupo</h4><span class="lvl l3">N3</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>«20 % de descuento, primeros 500 usos, uno por persona, no acumulable con tarifa reducida.»</p>
+          <p><span class="rl">Técnico:</span> el contador atómico de UC-16 con otro disfraz, más restricción de unicidad sobre (código, persona). Conviene enunciar la equivalencia en voz alta: <b>es el mismo problema</b>, y reconocer el patrón es el objetivo de aprendizaje. <span class="rl">Pruebas:</span> integración concurrente.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-26</span><h4>Webhook de confirmación de pago</h4><span class="lvl l3">N3</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>La pasarela llama de vuelta. El aviso puede llegar duplicado, desordenado o antes de que termine la petición original.</p>
+          <p><span class="rl">Técnico:</span> verificación de firma HMAC, idempotencia por identificador de evento del proveedor, descarte de avisos antiguos por secuencia, y un endpoint público que no puede exigir testigo y necesita otro mecanismo de autenticación. Conciliación programada para los avisos que nunca llegan. <span class="rl">Pruebas:</span> integración con WireMock.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-27</span><h4>Transferencia de entrada</h4><span class="lvl l2">N2</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Se compran cuatro entradas y se pasan tres a otras personas, que las reciben a su nombre.</p>
+          <p><span class="rl">Técnico:</span> invalidar la credencial anterior en el instante correcto, aceptación explícita de quien recibe, límite de transferencias en cadena y la pregunta sin respuesta obvia de quién conserva el derecho de devolución. <span class="rl">Pruebas:</span> integración y E2E.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-28</span><h4>Devolución y política de reembolso</h4><span class="lvl l2">N2</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Reembolsable hasta 48 horas antes, con o sin gastos según la política del evento; devolución parcial de un pedido de cuatro entradas.</p>
+          <p><span class="rl">Dominio:</span> la política como estrategia inyectable, que es el tercer ejemplo del criterio de las cinco capas. <span class="rl">Técnico:</span> la butaca que vuelve al inventario y, si hubo cupón, si el uso vuelve al cupo — el contador de UC-25 en sentido inverso. <span class="rl">Pruebas:</span> unitario para la política, integración para el efecto.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-29</span><h4>Cancelación y reembolso masivo</h4><span class="lvl l3">N3</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Se cancela la función. Hay que reembolsar 12.000 pedidos y avisar a sus titulares.</p>
+          <p><span class="rl">Técnico:</span> proceso por lotes <b>reanudable e idempotente</b> — un fallo en el pedido 7.000 no puede producir reembolsos duplicados al reanudar; paginación por clave y no por <code>OFFSET</code>; y un conjunto de trabajo que no retenga 12.000 pedidos en memoria. Es el problema de volumen más representativo del catálogo. <span class="rl">Pruebas:</span> integración con interrupción forzada.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-30</span><h4>Exportación de la lista de asistentes</h4><span class="lvl l2">N2</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>El promotor descarga los 20.000 asistentes de una función en CSV.</p>
+          <p><span class="rl">Técnico:</span> <code>findAll()</code> mata el proceso. Respuesta en flujo con <code>StreamingResponseBody</code>, <code>Stream</code> de JPA en transacción de solo lectura con <em>fetch size</em> ajustado y <code>clear()</code> periódico. Y el requisito que más se olvida: el fichero contiene datos personales y necesita su propio control de acceso y su entrada de auditoría. <span class="rl">Pruebas:</span> integración con cota de memoria.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-31</span><h4>Limitación de peticiones y cola virtual</h4><span class="lvl l3">N3</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Venta general de un evento de alta demanda: 20.000 clientes y 5.000 entradas. Sin control de admisión, la primera oleada satura el sistema y los clientes automatizados se llevan el inventario.</p>
+          <p><span class="rl">Técnico:</span> límites por cuenta y por dirección con Bucket4j, respuestas <code>429</code> con <code>Retry-After</code>, cola virtual con testigo de turno firmado y detección de patrones automatizados. <span class="rl">Pruebas:</span> carga.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-32</span><h4>Auditoría y datos personales</h4><span class="lvl l1">N1</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Quién modificó un precio, quién anuló una entrada, quién consultó la ficha de un asistente.</p>
+          <p><span class="rl">Técnico:</span> registro de auditoría que la aplicación no puede modificar, separado del registro técnico; y la conversación de protección de datos que el dominio plantea sola: qué se conserva, cuánto tiempo, y cómo se anonimiza a quien ejerce supresión sin invalidar la contabilidad del evento. <span class="rl">Pruebas:</span> integración.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-33</span><h4>Métricas de negocio y salud</h4><span class="lvl l2">N2</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Actuator y Micrometer instrumentando el negocio y no solo la JVM: retenciones creadas, caducadas y convertidas; tasa de conversión; p95 del endpoint de retención.</p>
+          <p><span class="rl">Técnico:</span> elegir qué señal merece alerta. La respuesta defendible en este sistema es la <b>tasa de rechazo de las retenciones</b>: si se dispara, o hay un evento agotándose o hay un cliente automatizado martilleando el endpoint, y las dos cosas piden reacción. Es una métrica que <b>informa una decisión</b>, no un contador de adorno.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-34</span><h4>Mejor butaca disponible</h4><span class="lvl l3">N3</span><span class="chip x">Élite</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>«Cuatro juntas, en la mejor zona que quepa en 200 €.» Requiere localizar tramos contiguos dentro de una fila, respetar la política de no dejar butacas aisladas y ordenar candidatos por zona y precio.</p>
+          <p><span class="rl">Técnico:</span> algoritmo de dominio comprobable como test unitario puro; consulta que no traiga 20.000 filas para elegir cuatro; y concurrencia, porque dos búsquedas simultáneas no pueden asignar el mismo tramo. <span class="rl">Pruebas:</span> unitario para el algoritmo, integración para la concurrencia.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-35</span><h4>Lista de espera con oferta temporizada</h4><span class="lvl l3">N3</span><span class="chip x">Élite</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Con la función agotada, los clientes se apuntan a una cola. Al liberarse una butaca se ofrece a quien encabeza la cola con quince minutos para reclamarla, y después al siguiente.</p>
+          <p><span class="rl">Técnico:</span> cola persistente consumida con <code>SKIP LOCKED</code> para que dos hilos no ofrezcan la misma butaca, gestión de temporizadores, y la condición límite en que la reclamación llega justo al expirar la ventana.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-36</span><h4>Reventa oficial con tope de precio</h4><span class="lvl l3">N3</span><span class="chip x">Élite</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Mercado secundario dentro de la plataforma, sujeto al tope legal de precio original más gastos.</p>
+          <p><span class="rl">Técnico:</span> casar oferta y demanda sin asignar dos veces la misma entrada, transferencia de titularidad y cobro atómicos, y propagación del tope cuando la entrada ya procede de una reventa anterior.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-38</span><h4>Migraciones de esquema y mapeo avanzado</h4><span class="lvl l2">N2</span><span class="chip e">Extensión</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Todo lo de JPA que en N0 se evitó deliberadamente, recogido aquí para quien quiera profundizar o para cuando el propio proyecto lo pida.</p>
+          <p><span class="rl">Contenido:</span> <b>migraciones versionadas con Flyway</b> — numeración, migración correctiva frente a reescritura, qué se hace cuando una migración ya se ha aplicado en otro entorno, y por qué el esquema no lo debe generar Hibernate en producción; <b>objetos de valor embebidos</b> con <code>@Embeddable</code> y sus mapeos compuestos; <b>filtros dinámicos</b> con <code>Specification</code> en lugar de condicionales encadenados; enumerados persistidos, convertidores de atributo y claves compuestas.</p>
+          <p><span class="rl">Nota docente:</span> este caso de uso existe para <b>sacar contenido avanzado de la primera semana</b>. El repositorio semilla ya trae Flyway configurado con la migración inicial, de modo que un equipo de N0 solo añade un fichero cuando añade una tabla, sin tener que entender el mecanismo. Así no hay carga cognitiva al principio y tampoco hay nada que rehacer después. <span class="rl">Pruebas:</span> integración sobre base de datos limpia y sobre base de datos ya migrada.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-39</span><h4>Edición concurrente del mapa de sala</h4><span class="lvl l3">N3</span><span class="chip x">Élite</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Dos operadores abren la ficha del mismo recinto, dedican dos minutos a reorganizar sectores y filas, y guardan. El segundo pisa el trabajo del primero sin que nadie se entere.</p>
+          <p><span class="rl">Por qué está aquí y no en el núcleo:</span> <b>es un problema distinto del de la butaca, no otra solución al mismo</b>. Aquí no se puede usar el <code>UPDATE</code> condicional porque el cambio son quince campos, ni sostener un bloqueo porque la edición dura minutos. Es el hueco exacto que llena el <b>bloqueo optimista</b>: <code>@Version</code> en la entidad, <code>OptimisticLockException</code> al guardar y una respuesta útil —«alguien ha modificado esto mientras editabas»— en lugar de un error genérico.</p>
+          <p><span class="rl">Aviso de diseño:</span> introducir <code>@Version</code> obliga a revisar cualquier <code>UPDATE</code> masivo sobre esa misma entidad, porque las sentencias en bloque <b>no incrementan la versión</b> y dejan el contexto de persistencia obsoleto. Se resuelve incluyendo <code>version = version + 1</code> en la sentencia y anotando <code>@Modifying(clearAutomatically = true, flushAutomatically = true)</code>. Es un fallo silencioso de los feos. <span class="rl">Pruebas:</span> integración con dos ediciones solapadas.</p>
+        </div>
+      </article>
+
+      <article class="uc compact">
+        <div class="top"><span class="ucid">UC-37</span><h4>Aforo en vivo y control de ocupación</h4><span class="lvl l2">N2</span><span class="chip x">Élite</span></div>
+        <div class="perf"></div>
+        <div class="body">
+          <p>Vista de operación para el responsable de sala: ocupación actual, ritmo de admisión por puerta, salidas y reentradas.</p>
+          <p><span class="rl">Técnico:</span> contadores que no se pueden recalcular con <code>COUNT</code> en cada refresco, actualizaciones enviadas al cliente en lugar de sondeo, y conciliación tras un terminal de puerta desconectado.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Especificación ejecutable</span></div>
+  <h2>De Gherkin a JUnit, sin Cucumber</h2>
+  <p class="lede prose">Tres ejemplos desarrollados, elegidos porque tienen <b>formas distintas</b>: uno de dominio puro que se resuelve con tests unitarios, uno de integración con base de datos real, y uno que sirve de contraejemplo deliberado. Los escenarios se escriben en Gherkin como especificación; la ejecución es JUnit 5 con <code>@Nested</code> y <code>@DisplayName</code>, de modo que el informe de tests reproduce la estructura del escenario. El vínculo entre uno y otro es una convención de nombres.</p>
+
+  <div class="scn">
+    <h4>Ejemplo 1 · Dominio puro</h4>
+    <div class="meta">UC-06 · Publicación del evento · N1 · resuelto íntegramente con tests unitarios</div>
+    <p>El caso ideal para Gherkin: actor claro, precondiciones enunciables y resultado observable, sin ninguna infraestructura de por medio. Los escenarios se traducen casi palabra por palabra, y el test corre en milisegundos porque no hay contexto de Spring ni base de datos. Es el ejemplo que conviene dar primero en clase.</p>
+    <div class="pair">
+      <div>
+        <div class="codehead">publicacion_evento.feature</div>
+<pre><i># language: es</i>
+<b>Característica:</b> Publicación de un evento
+  Un evento solo se pone a la venta cuando está
+  completo, y solo lo publica su promotor.
+
+  <b>Antecedentes:</b>
+    <b>Dado</b> un promotor "Sala Norte"
+    <b>Y</b> un evento en borrador de ese promotor
+
+  <b>Escenario:</b> Publicación de un evento completo
+    <b>Dado</b> que el evento tiene fecha futura
+    <b>Y</b> tiene inventario generado
+    <b>Y</b> todas sus zonas tienen precio
+    <b>Cuando</b> el promotor publica el evento
+    <b>Entonces</b> el evento queda EN_VENTA
+
+  <b>Escenario:</b> Falta el precio de una zona
+    <b>Dado</b> que el evento tiene inventario generado
+    <b>Y</b> la zona "Palco" no tiene precio
+    <b>Cuando</b> el promotor publica el evento
+    <b>Entonces</b> se rechaza por ZONA_SIN_PRECIO
+    <b>Y</b> el evento sigue en BORRADOR
+
+  <b>Esquema del escenario:</b> Transiciones ilegales
+    <b>Dado</b> un evento en estado "&lt;origen&gt;"
+    <b>Cuando</b> se intenta transitar a "&lt;destino&gt;"
+    <b>Entonces</b> se rechaza por TRANSICION_ILEGAL
+
+    <b>Ejemplos:</b>
+      | origen    | destino  |
+      | CELEBRADO | EN_VENTA |
+      | CANCELADO | APLAZADO |
+      | BORRADOR  | AGOTADO  |</pre>
+      </div>
+      <div>
+        <div class="codehead">PublicacionEventoTest.java</div>
+<pre><i>@DisplayName("UC-06 · Publicación de un evento")</i>
+class PublicacionEventoTest {
+
+  <i>// Antecedentes</i>
+  private final Promotor promotor = Datos.promotor("Sala Norte");
+  private Evento evento;
+
+  <i>@BeforeEach</i>
+  void antecedentes() {
+    evento = Datos.eventoEnBorrador(promotor);
+  }
+
+  <i>@Nested</i>
+  <i>@DisplayName("Dado un evento completo")</i>
+  class EventoCompleto {
+
+    <i>@BeforeEach</i>
+    void dado() {
+      evento.programar(FECHA_FUTURA);
+      evento.generarInventario();
+      evento.fijarPrecio(PISTA, Dinero.euros(45_00));
+      evento.fijarPrecio(PALCO, Dinero.euros(90_00));
+    }
+
+    <i>@Test</i>
+    <i>@DisplayName("cuando se publica, queda EN_VENTA")</i>
+    void publicacionCorrecta() {
+      evento.publicar(promotor, RELOJ);
+
+      assertThat(evento.estado())
+          .isEqualTo(<u>EN_VENTA</u>);
+    }
+  }
+
+  <i>@Nested</i>
+  <i>@DisplayName("Dado un evento con una zona sin precio")</i>
+  class ZonaSinPrecio {
+
+    <i>@BeforeEach</i>
+    void dado() {
+      evento.programar(FECHA_FUTURA);
+      evento.generarInventario();
+      evento.fijarPrecio(PISTA, Dinero.euros(45_00));
+      <i>// PALCO queda sin precio a propósito</i>
+    }
+
+    <i>@Test</i>
+    <i>@DisplayName("se rechaza y sigue en BORRADOR")</i>
+    void rechazaZonaSinPrecio() {
+      assertThatThrownBy(() -&gt; evento.publicar(promotor, RELOJ))
+          .isInstanceOf(EventoIncompletoException.class)
+          .extracting("motivo").isEqualTo(<u>ZONA_SIN_PRECIO</u>);
+
+      assertThat(evento.estado()).isEqualTo(<u>BORRADOR</u>);
+    }
+  }
+
+  <i>// Esquema del escenario → test parametrizado</i>
+  <i>@ParameterizedTest(name = "de {0} a {1} es ilegal")</i>
+  <i>@CsvSource({ "CELEBRADO,EN_VENTA",</i>
+  <i>             "CANCELADO,APLAZADO",</i>
+  <i>             "BORRADOR,AGOTADO" })</i>
+  void transicionesIlegales(Estado origen, Estado destino) {
+    Evento e = Datos.eventoEnEstado(origen);
+
+    assertThatThrownBy(() -&gt; e.transitarA(destino))
+        .isInstanceOf(TransicionIlegalException.class);
+  }
+}</pre>
+      </div>
+    </div>
+    <p style="margin-top:16px"><b>Qué mostrar en clase:</b> el <em>Esquema del escenario</em> de Gherkin y el <code>@ParameterizedTest</code> de JUnit son la misma idea, y la tabla de ejemplos se traslada literalmente. Y que toda esta clase de test corre por debajo de 100 ms porque el dominio está bien colocado: si hubiera que arrancar Spring para probar una transición de estado, la lógica estaría en el sitio equivocado.</p>
+  </div>
+
+  <div class="scn">
+    <h4>Ejemplo 2 · Integración con base de datos real</h4>
+    <div class="meta">UC-22 · Validación de entrada en puerta · N3 · Testcontainers</div>
+    <p>Aquí Gherkin sigue funcionando bien —el escenario del segundo escaneo se lee solo— pero la verificación ya no puede ser unitaria: lo que se prueba es que el estado persiste y que la segunda validación ve el efecto de la primera. Nótese que los <code>@Nested</code> reproducen el <em>Dado</em> del escenario.</p>
+    <div class="pair">
+      <div>
+        <div class="codehead">validacion_en_puerta.feature</div>
+<pre><i># language: es</i>
+<b>Característica:</b> Validación de entradas en puerta
+
+  <b>Antecedentes:</b>
+    <b>Dada</b> una función en curso
+    <b>Y</b> una entrada válida emitida para esa función
+
+  <b>Escenario:</b> Primera validación
+    <b>Cuando</b> la puerta 3 escanea la entrada
+    <b>Entonces</b> se admite el acceso
+    <b>Y</b> la entrada queda marcada como utilizada
+       en la puerta 3
+
+  <b>Escenario:</b> Segunda validación de la misma entrada
+    <b>Dado</b> que la entrada ya se validó a las 20:14
+       en la puerta 3
+    <b>Cuando</b> la puerta 5 escanea la entrada
+    <b>Entonces</b> se deniega el acceso por YA_UTILIZADA
+    <b>Y</b> la respuesta indica las 20:14 y la puerta 3
+
+  <b>Escenario:</b> Credencial manipulada
+    <b>Dado</b> un código cuya firma no corresponde
+    <b>Cuando</b> la puerta 3 lo escanea
+    <b>Entonces</b> se deniega el acceso por FIRMA_INVALIDA
+    <b>Y</b> no se registra ninguna admisión</pre>
+      </div>
+      <div>
+        <div class="codehead">ValidacionEnPuertaIT.java</div>
+<pre><i>@SpringBootTest</i>
+<i>@Testcontainers</i>
+<i>@DisplayName("UC-22 · Validación de entradas en puerta")</i>
+class ValidacionEnPuertaIT {
+
+  <i>@Container</i>
+  static final PostgreSQLContainer&lt;?&gt; DB =
+      new PostgreSQLContainer&lt;&gt;("postgres:16");
+
+  <i>@Autowired</i> ValidacionEnPuerta validacion;
+  <i>@Autowired</i> Fixture fixture;
+
+  private Entrada entrada;
+
+  <i>@BeforeEach</i>
+  void antecedentes() {
+    entrada = fixture.funcionEnCursoConUnaEntrada();
+  }
+
+  <i>@Test</i>
+  <i>@DisplayName("Primera validación: se admite el acceso")</i>
+  void primeraValidacion() {
+    var r = validacion.escanear(entrada.codigo(), PUERTA_3);
+
+    assertThat(r.admitido()).isTrue();
+    assertThat(fixture.recargar(entrada))
+        .satisfies(e -&gt; {
+          assertThat(e.usadaEn()).isNotNull();
+          assertThat(e.puerta()).isEqualTo(<u>PUERTA_3</u>);
+        });
+  }
+
+  <i>@Nested</i>
+  <i>@DisplayName("Dado que ya se validó a las 20:14 en la puerta 3")</i>
+  class YaUtilizada {
+
+    <i>@BeforeEach</i>
+    void dado() {
+      fixture.marcarUsada(entrada, LAS_20_14, PUERTA_3);
+    }
+
+    <i>@Test</i>
+    <i>@DisplayName("se deniega, indicando hora y puerta original")</i>
+    void segundaValidacion() {
+      var r = validacion.escanear(entrada.codigo(), PUERTA_5);
+
+      assertThat(r.admitido()).isFalse();
+      assertThat(r.motivo()).isEqualTo(<u>YA_UTILIZADA</u>);
+      assertThat(r.usadaEn()).isEqualTo(LAS_20_14);
+      assertThat(r.puertaOriginal()).isEqualTo(PUERTA_3);
+    }
+  }
+
+  <i>@Test</i>
+  <i>@DisplayName("Credencial manipulada: FIRMA_INVALIDA, sin admisión")</i>
+  void credencialManipulada() {
+    var alterado = Codigos.alterarUnByte(entrada.codigo());
+
+    var r = validacion.escanear(alterado, PUERTA_3);
+
+    assertThat(r.motivo()).isEqualTo(<u>FIRMA_INVALIDA</u>);
+    assertThat(fixture.admisiones()).isEmpty();
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="scn" style="border-color:var(--accent)">
+    <h4>Ejemplo 3 · El contraejemplo</h4>
+    <div class="meta">UC-14 · Retención de butacas · N3 · dónde Gherkin deja de servir</div>
+    <p>Los escenarios funcionales de UC-14 se escriben en Gherkin sin problema. El de concurrencia, no. Y merece la pena enseñarlo en clase precisamente <b>porque se puede escribir</b>: el escenario resultante parece correcto, es legible, y no dice absolutamente nada.</p>
+    <div class="pair">
+      <div>
+        <div class="codehead">retencion.feature · lo que sí funciona</div>
+<pre><i># language: es</i>
+<b>Característica:</b> Retención temporal de butacas
+
+  <b>Escenario:</b> Retención de tres butacas libres
+    <b>Dado</b> un cliente autenticado
+    <b>Y</b> las butacas 7-12, 7-13 y 7-14 están libres
+    <b>Cuando</b> el cliente las solicita
+    <b>Entonces</b> las tres quedan retenidas a su nombre
+    <b>Y</b> la retención caduca a los 10 minutos
+
+  <b>Escenario:</b> Una de las butacas ya está vendida
+    <b>Dado</b> que la butaca 7-13 está vendida
+    <b>Cuando</b> el cliente solicita 7-12, 7-13 y 7-14
+    <b>Entonces</b> la solicitud se rechaza entera
+    <b>Y</b> la butaca 7-12 sigue libre
+
+  <b>Escenario:</b> Se supera el límite por persona
+    <b>Dado</b> que el cliente ya tiene 4 entradas
+    <b>Cuando</b> solicita 3 butacas más
+    <b>Entonces</b> se rechaza por LIMITE_SUPERADO</pre>
+        <div class="codehead" style="margin-top:18px; color:var(--accent)">…y lo que no</div>
+<pre><b>Escenario:</b> Dos clientes piden la misma butaca a la vez
+    <b>Dado</b> que la butaca 7-13 está libre
+    <b>Cuando</b> 50 clientes la solicitan <u>simultáneamente</u>
+    <b>Entonces</b> exactamente uno obtiene la retención
+
+<i>// El escenario es legible y es inútil. Toda la</i>
+<i>// ingeniería —la barrera de salida, el pool de</i>
+<i>// hilos, la distinción entre rechazo esperado y</i>
+<i>// defecto— queda escondida detrás de la palabra</i>
+<i>// "simultáneamente", dentro de la definición del</i>
+<i>// paso. Y es exactamente lo que hay que enseñar.</i></pre>
+      </div>
+      <div>
+        <div class="codehead">RetencionConcurrenteIT.java · JUnit plano</div>
+<pre><i>@Test</i>
+<i>@DisplayName("50 solicitudes simultáneas sobre la misma "</i>
+<i>           + "butaca: exactamente una prospera")</i>
+void unaSolaRetencionGana() throws Exception {
+  var butaca = fixture.butacaLibre("7-13");
+  int hilos = 50;
+
+  var pool      = Executors.newFixedThreadPool(hilos);
+  var salida    = new CountDownLatch(1);      <i>// barrera</i>
+  var acabados  = new CountDownLatch(hilos);
+  var exitos    = new AtomicInteger();
+  var rechazos  = new AtomicInteger();
+  var inesperados = new CopyOnWriteArrayList&lt;Throwable&gt;();
+
+  for (int i = 0; i &lt; hilos; i++) {
+    var cliente = fixture.cliente(i);
+    pool.submit(() -&gt; {
+      try {
+        salida.await();          <i>// todos arrancan a la vez</i>
+        retenciones.retener(cliente, List.of(butaca.id()));
+        exitos.incrementAndGet();
+      } catch (ButacaNoDisponibleException esperado) {
+        rechazos.incrementAndGet();
+      } catch (Throwable t) {
+        inesperados.add(t);      <i>// 500, interbloqueo, etc.</i>
+      } finally {
+        acabados.countDown();
+      }
+    });
+  }
+
+  salida.countDown();
+  assertThat(acabados.await(30, SECONDS)).isTrue();
+  pool.shutdownNow();
+
+  assertThat(exitos).hasValue(<u>1</u>);
+  assertThat(rechazos).hasValue(<u>hilos - 1</u>);
+  assertThat(inesperados).isEmpty();
+  assertThat(fixture.retencionesDe(butaca)).hasSize(1);
+}</pre>
+        <p style="margin-top:14px"><b>Los tres detalles que se explican aquí</b> y que no cabrían en un paso de Gherkin: la <code>CountDownLatch</code> de salida existe para que los cincuenta hilos arranquen a la vez y no en cascada; el <code>catch</code> separa el rechazo <em>esperado</em> del defecto, porque un test que solo cuente éxitos pasa también cuando la aplicación devuelve cuarenta y nueve errores 500; y la última aserción va contra la base de datos, no contra los contadores, porque los contadores son lo que el código <em>cree</em> que ha pasado.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-bottom:0">
+      <div class="h">La regla que sale de aquí</div>
+      <p><b>Gherkin para el comportamiento funcional; JUnit plano para las propiedades de concurrencia y rendimiento.</b> No es una carencia de la herramienta: Gherkin describe <em>una</em> ejecución con un estado inicial y un resultado, y las propiedades de este proyecto se refieren a <em>muchas</em> ejecuciones entrelazadas. Saber cuándo una herramienta no aplica es contenido evaluable de la asignatura, y este es el ejemplo con el que se enseña.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="h">Alcance recomendado del Gherkin</div>
+    <p>Especificar en Gherkin <b>los seis u ocho casos de uso funcionales del núcleo</b> —UC-06, UC-09, UC-18, UC-20, UC-22 y los caminos felices de UC-14—, no los 37. Escribir escenarios para un caso de eficiencia como UC-11 produce texto ceremonial: «Entonces la consulta usa 3 sentencias» no es una frase de negocio y nadie la va a leer como tal.</p>
+  </div>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Cobertura</span></div>
+  <h2>Resultados de aprendizaje, casos de uso y evidencia</h2>
+  <p class="lede prose">La tabla sirve para redactar la guía docente. Establece que ningún resultado declarado queda sin trabajar y, sobre todo, que ninguno se evalúa por afirmación.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Resultado</th><th>Dónde se trabaja</th><th>Evidencia evaluable</th></tr></thead>
+      <tbody>
+        <tr><td>Concurrencia y bloqueos</td><td class="refs">UC-14 · UC-15 · UC-16 · UC-17 · UC-22</td><td class="ev">Test de 50 hilos con un único éxito; el <code>UPDATE</code> condicional aplicado a los tres casos de la familia; <em>lost update</em> y <em>write skew</em> identificados por su nombre; y la explicación de por qué el motor lo garantiza bajo <em>read committed</em>.</td></tr>
+        <tr><td>Transacciones y aislamiento</td><td class="refs">UC-15 · UC-17 · UC-19 · UC-20</td><td class="ev">Test del entrelazado barrido-pago; agotamiento del pool demostrado con la llamada de red dentro de la transacción; y las trampas de <code>@Transactional</code> —auto-invocación, propagación y el test que pasa sin demostrar nada— reproducidas por el equipo.</td></tr>
+        <tr><td>Diseño del dominio</td><td class="refs">UC-05 · UC-06 · UC-08 · UC-28</td><td class="ev">Tests unitarios puros sin contexto de Spring; revisión de arquitectura de la sesión 8 contra el criterio de las cinco capas.</td></tr>
+        <tr><td>Mapeo JPA y agregados</td><td class="refs">UC-01 · UC-02 · UC-07 · UC-10</td><td class="ev">Esquema revisado por el profesorado en la sesión 2; importación por lotes dentro del presupuesto de tiempo y memoria declarado.</td></tr>
+        <tr><td>Rendimiento de consultas</td><td class="refs">UC-03 → UC-11 · UC-12 · UC-13</td><td class="ev">Presupuesto de sentencias verificado en el pipeline sobre cinco endpoints, de modo que una regresión de N+1 rompe el build; y un endpoint implementado de dos formas y comparado con cifras.</td></tr>
+        <tr><td>Diagnóstico y planes</td><td class="refs">UC-11 · UC-13 · UC-22</td><td class="ev">Cuaderno de rendimiento con <b>tres entradas</b> —UC-10, UC-11 y UC-14—, cada una con el antes y el después medidos y el plan de <code>EXPLAIN (ANALYZE, BUFFERS)</code>.</td></tr>
+        <tr><td>Volumen y memoria</td><td class="refs">UC-10 · UC-12 · UC-29 · UC-30</td><td class="ev">Exportación de 20.000 filas y reembolso de 12.000 pedidos con conjunto de trabajo acotado y proceso reanudable.</td></tr>
+        <tr><td>Autenticación</td><td class="refs">UC-04 → UC-23</td><td class="ev">Rotación de refresco con detección de reutilización; ausencia de enumeración de cuentas. El fraccionamiento en dos casos de uso es en sí mismo una decisión de diseño docente.</td></tr>
+        <tr><td>Autorización</td><td class="refs">UC-09 · UC-32</td><td class="ev">Matriz completa rol × endpoint e informe del ejercicio cruzado entre equipos.</td></tr>
+        <tr><td>Integración externa</td><td class="refs">UC-19 · UC-26</td><td class="ev">Suite con WireMock inyectando latencia, fallos y respuestas tardías.</td></tr>
+        <tr><td>Idempotencia y fiabilidad</td><td class="refs">UC-18 · UC-20 · UC-26 · UC-29</td><td class="ev">Envíos duplicados con efecto único; <em>outbox</em> que sobrevive a un reinicio.</td></tr>
+        <tr><td>Prueba unitaria</td><td class="refs">UC-05 · UC-06 · UC-08 · UC-21</td><td class="ev">Suite de dominio que se ejecuta entera por debajo de dos segundos, y la ausencia de mocks de repositorio como indicador de que la lógica está bien colocada.</td></tr>
+        <tr><td>Prueba de integración</td><td class="refs">Todo el proyecto</td><td class="ev">Testcontainers con PostgreSQL desde la sesión 1; H2 excluido, con el motivo demostrado y no afirmado.</td></tr>
+        <tr><td>Prueba de concurrencia</td><td class="refs">UC-14 · UC-15 · UC-16 · UC-22</td><td class="ev">Suite de aceptación del profesorado, no modificable por el alumnado.</td></tr>
+        <tr><td>Prueba de extremo a extremo</td><td class="refs">UC-04 · UC-20 · UC-09</td><td class="ev">REST Assured contra la aplicación arrancada: buscar, retener, pagar, recibir credencial, validar en puerta.</td></tr>
+        <tr><td>Prueba de carga</td><td class="refs">UC-14 · UC-16</td><td class="ev">Dos ejecuciones obligatorias de k6 —UC-14 y UC-16—: sobreaforo cero y comparativa de estrategias. El agotamiento del pool de UC-19 lo demuestra el profesorado en el taller.</td></tr>
+        <tr><td>Especificación ejecutable</td><td class="refs">UC-06 · UC-22 · UC-14</td><td class="ev">Escenarios en Gherkin para los casos funcionales del núcleo y su correspondencia en JUnit; y la justificación escrita de por qué los tests de concurrencia no se especifican así.</td></tr>
+        <tr><td>Integración continua</td><td class="refs">Todo el proyecto</td><td class="ev">Pipeline por etapas, umbral de cobertura, presupuesto de sentencias en cinco endpoints, análisis estático, revisión de dependencias vulnerables.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Calendario</span></div>
+  <h2>Nueve sesiones de 3 h 45 min</h2>
+  <p class="lede prose">Todas las sesiones siguen la misma estructura, para que el alumnado sepa qué esperar y la parte dirigida no se improvise. Las tres primeras siguen la curva de dificultad; a partir de la cuarta, el orden lo marca la dependencia funcional.</p>
+  <div class="rhythm">
+    <div><div class="t">0:00 – 0:20</div><div class="d">Apertura: tablero, bloqueos, compromisos de la sesión anterior</div></div>
+    <div><div class="t">0:20 – 1:05</div><div class="d">Taller dirigido con implementación en vivo del problema del día</div></div>
+    <div><div class="t">1:05 – 3:00</div><div class="d">Trabajo de equipo con rotación del profesorado (pausa de 15 min)</div></div>
+    <div><div class="t">3:00 – 3:35</div><div class="d">Demostración cruzada entre equipos</div></div>
+    <div><div class="t">3:35 – 3:45</div><div class="d">Cierre y compromiso para la siguiente</div></div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>1</b><span class="s">N0</span></div>
+    <div class="co">
+      <h4>Del enunciado al esqueleto andante</h4>
+      <div class="ucs">UC-01 · UC-02</div>
+      <dl>
+        <dt>Taller</dt><dd>Modelado del dominio en la pizarra: agregados, invariantes, entidad frente a objeto de valor. La pregunta que ordena el resto: <b>¿qué protege cada transacción?</b> Y presentación honesta de la curva: <b>estas dos semanas son fáciles a propósito</b>.</dd>
+        <dt>Equipo</dt><dd>Arrancar desde el repositorio semilla, PostgreSQL bajo Testcontainers, un endpoint que atraviese todas las capas y el primer test de integración.</dd>
+        <dt>Entrega</dt><dd class="deliv">Pipeline de GitHub Actions en verde con un test de integración contra PostgreSQL real.</dd>
+        <dt>Justificación</dt><dd>Si el esqueleto no atraviesa la pila completa el primer día, el trabajo de integración se acumula al final y el proyecto se hunde en la sesión 8. No es negociable.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>2</b><span class="s">N0·N1</span></div>
+    <div class="co">
+      <h4>Persistencia, primeras reglas y primeros tests</h4>
+      <div class="ucs">UC-03 · UC-04 · UC-05 · UC-06 · UC-07</div>
+      <dl>
+        <dt>Taller</dt><dd>Mapeo JPA en la práctica: <code>equals</code> y <code>hashCode</code> en entidades, direccionalidad de asociaciones, por qué <code>EAGER</code> es un defecto en diferido. Diez minutos sobre <b>por qué el semilla trae <code>open-in-view</code> desactivado</b>. Y la primera especificación en Gherkin con su JUnit, sobre UC-06.</dd>
+        <dt>Equipo</dt><dd>Cierre del nivel N0 y entrada en N1. <b>Revisión obligatoria del esquema con el profesorado antes de cerrar la sesión</b>: los defectos que se corrigen aquí costarían una semana más adelante.</dd>
+        <dt>Entrega</dt><dd class="deliv">Sistema autenticado con catálogo público, máquina de estados del evento probada al 100 % por tests unitarios puros, y esquema validado.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>3</b><span class="s">N2</span></div>
+    <div class="co">
+      <h4>Cuando JPA deja de parecer sencillo</h4>
+      <div class="ucs">UC-10 · UC-11 · UC-12</div>
+      <dl>
+        <dt>Taller</dt><dd>El N+1 en directo y <b>medido, no intuido</b>: estadísticas de Hibernate y datasource-proxy para contarlo, <code>EXPLAIN (ANALYZE, BUFFERS)</code> para leer el plan, y solo entonces la corrección con proyección, <code>@EntityGraph</code> y <code>join fetch</code>. Después, la trampa de paginar con <code>join fetch</code> y la paginación por clave.</dd>
+        <dt>Equipo</dt><dd>Se retoma el catálogo escrito en la sesión 2 y se corrige con datos reales. Se abre el <b>cuaderno de rendimiento</b>, que llevará <b>tres entradas en todo el curso</b> —UC-10, UC-11 y UC-14—, cada una con su antes y su después medidos. En los demás casos se mide, pero no se documenta.</dd>
+        <dt>Entrega</dt><dd class="deliv">Test de conteo de sentencias en el pipeline —20 eventos en 3 sentencias o menos— y primeras entradas del cuaderno con las dos implementaciones del catálogo comparadas.</dd>
+        <dt>Nota</dt><dd>Era la sesión más cargada del calendario hasta que salió de ella el bloque de índices. La estrategia de indexación —índices parciales, orden de columnas, coste en escritura— es contenido del segundo trimestre: el esquema del repositorio semilla ya trae los índices que hacen falta, sin exigir que el alumnado los deduzca.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses hot">
+    <div class="num"><b>4</b><span class="s">N3</span></div>
+    <div class="co">
+      <h4>Control de concurrencia</h4>
+      <div class="ucs">UC-14 · UC-15</div>
+      <dl>
+        <dt>Taller</dt><dd>La condición de carrera demostrada directamente: dos transacciones abiertas contra una misma fila en dos terminales, y <code>pg_locks</code> consultada para ver el grafo de espera. Después, <b>por qué el <code>UPDATE</code> condicional sí funciona</b>: bajo <em>read committed</em> el motor espera, relee la fila y reevalúa el <code>WHERE</code>, que es justo la garantía que el <code>if</code> de Java no tiene. Y el nombre de cada anomalía: <em>lost update</em> en UC-14, <em>write skew</em> en UC-15.</dd>
+        <dt>Equipo</dt><dd>Implementar la retención con el <code>UPDATE</code> condicional, después de haber escrito primero la versión ingenua con <code>if</code> y haberla visto fallar en el test. El contraste entre las dos es el contenido de la sesión.</dd>
+        <dt>Entrega</dt><dd class="deliv">50 hilos, un éxito, 49 rechazos limpios. Y la versión ingenua conservada en el historial de Git, con el test que la delata.</dd>
+        <dt>Control</dt><dd>Ningún equipo debería pasar de esta sesión sin UC-14 cerrado. Un equipo retrasado se atiende aquí, no en la sesión 7.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>5</b><span class="s">N3</span></div>
+    <div class="co">
+      <h4>Tiempo, cupos y expiración</h4>
+      <div class="ucs">UC-16 · UC-17</div>
+      <dl>
+        <dt>Taller</dt><dd>Inyección de <code>Clock</code> y el coste de haberlo omitido. Después, <b>media hora de <code>@Transactional</code> en profundidad</b>: auto-invocación —llamar a un método transaccional desde la propia clase no abre transacción, porque se esquiva el proxy—, propagación con <code>REQUIRES_NEW</code> para la auditoría que debe sobrevivir al <em>rollback</em>, <code>rollbackFor</code> y excepciones comprobadas, y <b>por qué un test anotado con <code>@Transactional</code> informa de un éxito que no ha demostrado</b>. Cierre con el entrelazado barrido-pago.</dd>
+        <dt>Equipo</dt><dd>Admisión general con contador atómico —implementando primero la versión ingenua para observar su fallo— y expiración de retenciones con <code>SKIP LOCKED</code> y lotes acotados.</dd>
+        <dt>Entrega</dt><dd class="deliv">Test que fuerza el entrelazado expiración-pago; prueba de carga de admisión general con sobreaforo cero.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>6</b><span class="s">N1·N3</span></div>
+    <div class="co">
+      <h4>Autorización y evaluación cruzada</h4>
+      <div class="ucs">UC-09 · UC-23</div>
+      <dl>
+        <dt>Taller</dt><dd><code>SecurityFilterChain</code>, testigos de acceso y de refresco, rotación con detección de reutilización, y demostración de una referencia directa insegura contra un endpoint deliberadamente defectuoso.</dd>
+        <dt>Equipo</dt><dd>Implementación en la primera mitad. En la segunda, <b>ejercicio cruzado entre equipos</b>: cada grupo recibe el endpoint de otro grupo, credenciales de asistente corriente y una lista de comprobación de defectos de autorización que intentar. Se puntúa lo que se encuentra y lo que se resiste.</dd>
+        <dt>Entrega</dt><dd class="deliv">Informes de la evaluación realizada y de la recibida; correcciones aplicadas y verificadas antes de la sesión 7.</dd>
+        <dt>Justificación</dt><dd>La autorización es el resultado de aprendizaje menos apto para transmitirse por exposición. La evaluación por pares produce defectos en el sistema propio del estudiante, que es la condición bajo la que la lección se sostiene.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>7</b><span class="s">N3</span></div>
+    <div class="co">
+      <h4>Integración con sistemas externos poco fiables</h4>
+      <div class="ucs">UC-08 · UC-18 · UC-19 · UC-20 · UC-21</div>
+      <dl>
+        <dt>Taller</dt><dd>Tiempos de espera, reintentos e idempotencia; <code>AFTER_COMMIT</code> y el patrón <em>outbox</em> dentro de una sola aplicación. Y la <b>demostración en vivo del agotamiento del pool</b>: la misma prueba de carga con la llamada de red dentro y fuera de la transacción, ejecutada por el profesorado. Es la razón por la que los equipos no tienen que reproducirla.</dd>
+        <dt>Equipo</dt><dd>Cierre del recorrido de compra contra la pasarela simulada, configurada para fallar el 30 % de las peticiones. UC-08 es de nivel N1 y se aborda aquí por dependencia funcional, no por dificultad: sirve de respiro dentro de una sesión exigente.</dd>
+        <dt>Entrega</dt><dd class="deliv">Compra de extremo a extremo bajo comportamiento adverso de la pasarela: ni una butaca perdida, ni un cobro duplicado.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>8</b><span class="s">N2·N3</span></div>
+    <div class="co">
+      <h4>Calidad demostrable</h4>
+      <div class="ucs">UC-13 · UC-22 · pipeline</div>
+      <dl>
+        <dt>Taller</dt><dd>La pirámide de pruebas aplicada a <em>este</em> sistema, incluida la conversación honesta sobre por qué aquí no sale equilibrada. Después, k6 contra el endpoint de retención y cierre del <b>presupuesto de sentencias sobre los cinco endpoints acordados</b> —catálogo, mapa de butacas, panel, retención y puerta—, cada uno con su máximo declarado y verificado en el pipeline.</dd>
+        <dt>Equipo</dt><dd>Validación en puerta, panel del promotor y <b>refactorización dirigida</b>: devolver al dominio lo que se acumuló en la capa de servicio, evaluado con el criterio de las cinco capas.</dd>
+        <dt>Entrega</dt><dd class="deliv">Pipeline por etapas con umbral de cobertura, presupuesto de sentencias en cinco endpoints, análisis estático y revisión de dependencias; informe de carga con sobreaforo cero y las tres entradas del cuaderno de rendimiento cerradas.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="ses">
+    <div class="num"><b>9</b><span class="s">Fin</span></div>
+    <div class="co">
+      <h4>Defensa técnica</h4>
+      <div class="ucs">Evaluación</div>
+      <dl>
+        <dt>Formato</dt><dd>Veinte minutos por equipo ante el grupo: recorrido funcional, <b>tres decisiones técnicas defendidas con mediciones propias</b>, y la condición de carrera más significativa que encontraron, cómo la reprodujeron y cómo la resolvieron.</dd>
+        <dt>Individual</dt><dd>Cada estudiante se examina sobre una parte del sistema que <b>no escribió</b>. Establece si el equipo funcionó como equipo o como cuatro trabajos individuales grapados.</dd>
+        <dt>Cierre</dt><dd>Revisión de arquitectura cruzada y retrospectiva: qué decisión temprana resultó más cara.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Material del profesorado</span></div>
+  <h2>Qué debe estar listo antes de la sesión 1</h2>
+  <p class="lede prose">El proyecto cabe en nueve sesiones solo si ninguna se gasta en configuración. Todo lo de esta lista lo entrega el equipo docente, completo y verificado.</p>
+  <ol class="steps">
+    <li><b>Repositorio semilla.</b> Spring Boot, PostgreSQL en Docker Compose y en Testcontainers, un endpoint de ejemplo, un test de cada nivel y el pipeline de GitHub Actions ya en verde. <b>Flyway viene configurado con la migración inicial ya escrita</b>, de modo que en N0 un equipo solo copia un fichero cuando añade una tabla, sin tener que entender el mecanismo: el contenido de migraciones se explica en UC-38, no en la primera semana. Que el primer <code>git clone</code> termine en un build correcto fija el estándar de la asignatura, y en una curva de entrada suave eso importa más que en ninguna otra.</li>
+    <li><b>Tres decisiones de configuración dentro de ese repositorio.</b> <code>spring.jpa.open-in-view=false</code> es la más rentable: viene activada por defecto y es la razón concreta de que JPA parezca inofensivo al principio, porque mantiene la sesión abierta durante el renderizado y convierte los N+1 en latencia silenciosa en lugar de en errores. Desactivada, un acceso perezoso fuera de transacción falla de inmediato y de forma visible. Acompañada de <code>hibernate.generate_statistics</code> y de un ayudante de aserción de número de sentencias ya escrito, para que cada endpoint nazca con presupuesto.</li>
+    <li><b>Suite de aceptación no modificable.</b> El instrumento central de la asignatura: <b>la especificación es ejecutable</b>. Contiene el test de 50 hilos, el de conteo de sentencias, el de idempotencia y la matriz de acceso por roles. Falla contra la implementación intuitiva, que es su función. <b>Se entrega el primer día, pero organizada por niveles</b>: en la sesión 1 solo se activan las pruebas de N0, y las de concurrencia aparecen en la sesión 4. Entregarlas todas rojas desde el principio contradice la curva de entrada suave.</li>
+    <li><b>Datos realistas, en dos tamaños.</b> Un recinto pequeño para N0 y N1, y un mapa de 20.000 butacas, un catálogo de 300 eventos y un generador de 40.000 pedidos para N2 y N3. El tamaño pequeño no es una simplificación perezosa: es lo que permite que las primeras semanas sean abordables sin mentir sobre el problema.</li>
+    <li><b>Pasarela de pago simulada.</b> Contenedor o WireMock con escenarios seleccionables: éxito, rechazo, latencia, respuesta tardía tras el vencimiento, webhook duplicado y webhook desordenado. UC-19 y UC-26 son teóricos sin esto.</li>
+    <li><b>Guion de carga con k6.</b> Preparado y comentado, para que un equipo solo tenga que apuntarlo a su propio servicio e interpretar el informe.</li>
+    <li><b>Plantilla del cuaderno de rendimiento.</b> Tres fichas, una por caso exigido —UC-10, UC-11 y UC-14—: qué se cambió, sentencias antes y después, latencia antes y después, y el plan de <code>EXPLAIN (ANALYZE, BUFFERS)</code>. Entregar la plantilla ya limitada a tres es lo que evita que el equipo la rellene treinta veces. Impide que se optimice por autoridad del profesor en lugar de por medición, y se evalúa como evidencia en la sesión 9.</li>
+    <li><b>Ficheros <code>.feature</code> de ejemplo con su JUnit.</b> Los tres desarrollados en este documento, entregados como plantilla. Sin un ejemplo resuelto, la especificación en Gherkin degenera en prosa decorativa.</li>
+    <li><b>Lista de comprobación del ejercicio cruzado.</b> Diez comprobaciones concretas para la sesión 6, con plantilla de informe.</li>
+    <li><b>Plantilla de registro de decisiones.</b> Una página por decisión: contexto, opciones, elección, consecuencias. Es lo que se pide defender en la sesión 9, así que debe mantenerse desde el principio.</li>
+  </ol>
+
+  <div class="callout">
+    <div class="h">Recomendación</div>
+    <p><b>Sin interfaz web.</b> El entregable es una API con su descripción OpenAPI y una colección de peticiones. En cuanto se admite un <em>frontend</em> en el alcance, los equipos dedican dos sesiones a pintar un mapa de butacas y ninguna a la lógica de retención, que es el material que justifica la asignatura.</p>
+    <p>Si hace falta algo visual para la defensa, un cliente mínimo de una sola página entregado por el profesorado resuelve la demostración sin consumir presupuesto de nadie.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Evaluación</span></div>
+  <h2>Pesos de calificación</h2>
+  <p class="lede prose">Los pesos favorecen lo que no se puede aparentar: la suite de aceptación se ejecuta contra el repositorio de cada equipo y produce una cifra antes de que nadie lea código.</p>
+  <div class="rub">
+    <div class="row"><div class="pc">20</div><div class="lb"><b>Corrección bajo concurrencia</b><span>Resultado de la suite de aceptación del profesorado. Objetivo, automático y no negociable.</span></div></div>
+    <div class="bar"><i style="width:20%"></i></div>
+    <div class="row"><div class="pc">20</div><div class="lb"><b>Funcionalidad del núcleo</b><span>Los 23 casos de uso obligatorios, completos y demostrables de extremo a extremo.</span></div></div>
+    <div class="bar"><i style="width:20%"></i></div>
+    <div class="row"><div class="pc">15</div><div class="lb"><b>Diseño del dominio</b><span>Colocación de cada regla, evaluada con el criterio de las cinco capas. Un servicio que crece sin límite cuesta puntos aunque funcione.</span></div></div>
+    <div class="bar"><i style="width:15%"></i></div>
+    <div class="row"><div class="pc">15</div><div class="lb"><b>Pruebas y rendimiento</b><span>No la cobertura sola: la forma de la pirámide, el tiempo de la suite, si los tests detectan defectos inyectados, y el cuaderno de rendimiento con mediciones propias.</span></div></div>
+    <div class="bar"><i style="width:15%"></i></div>
+    <div class="row"><div class="pc">10</div><div class="lb"><b>Seguridad</b><span>Matriz de autorización, resultado del ejercicio cruzado y correcciones aplicadas después.</span></div></div>
+    <div class="bar"><i style="width:10%"></i></div>
+    <div class="row"><div class="pc">10</div><div class="lb"><b>Proceso de ingeniería</b><span>Historial de <em>commits</em>, revisión de código dentro del equipo, configuración del pipeline y registro de decisiones.</span></div></div>
+    <div class="bar"><i style="width:10%"></i></div>
+    <div class="row"><div class="pc">10</div><div class="lb"><b>Defensa individual</b><span>Examen sobre código que la persona no escribió. Modula la nota de equipo en ambos sentidos.</span></div></div>
+    <div class="bar"><i style="width:10%"></i></div>
+  </div>
+
+  <div class="callout">
+    <div class="h">Responsabilidad individual en un equipo de cuatro</div>
+    <p>Los equipos de cuatro llevan asociado el riesgo permanente de que una persona arrastre el proyecto. Tres medidas baratas funcionan: <b>cada estudiante es responsable de un vertical completo</b> —de la entidad al test de extremo a extremo— y lo defiende; <b>ninguna rama se integra sin revisión de otro miembro</b>, con el historial de Git como evidencia; y <b>el examen individual de la sesión 9 versa sobre código ajeno</b>, lo que obliga a que las revisiones hayan sido sustantivas.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Gestión del riesgo</span></div>
+  <h2>Plan de reducción de alcance</h2>
+  <p class="lede prose">En este orden, y publicado antes de empezar, para que una reducción se entienda como decisión de alcance y no como fracaso — que es en sí misma una competencia de ingeniería.</p>
+  <div class="grid2">
+    <div class="card" style="padding:20px">
+      <div class="eyebrow" style="color:var(--held)">Orden de recorte</div>
+      <ol class="steps" style="margin-top:14px">
+        <li><b>Fuera la posventa completa</b> (UC-27, UC-28, UC-29). Recupera unas 35 horas por equipo y no elimina ningún resultado evaluable que no esté cubierto en otro sitio.</li>
+        <li><b>Fuera la admisión general</b> (UC-16). El contador atómico sigue cubierto por el código de descuento, bastante más barato de implementar.</li>
+        <li><b>Pasarela que siempre acepta.</b> Se conservan la idempotencia y el <code>AFTER_COMMIT</code>; se pierden los tiempos de espera y la compensación.</li>
+        <li><b>Extremo a extremo reducido</b> a tres recorridos principales en vez de la matriz completa.</li>
+        <li><b>Lo que no se recorta bajo ningún concepto:</b> el nivel N0 completo —porque es lo que sostiene la entrada suave—, UC-14 con su test de 50 hilos, el presupuesto de sentencias en el pipeline y las tres entradas del cuaderno de rendimiento.</li>
+        <li><b>Y un aviso sobre este plan:</b> es un recorte de <em>anchura</em>. El recorte de <em>profundidad</em> ya está aplicado en el catálogo y descrito en la sección «Una vez a fondo, después ligero»; no es una reserva disponible, es dinero ya gastado. Si hiciera falta más margen, sale de aquí.</li>
+      </ol>
+    </div>
+    <div class="card" style="padding:20px">
+      <div class="eyebrow" style="color:var(--slate)">Riesgos y respuesta</div>
+      <ul class="plain" style="margin-top:14px">
+        <li><b>Abandono en las dos primeras semanas.</b> El riesgo que motiva la curva de dificultad. Se ataca con el nivel N0, con la suite de aceptación activada por niveles y diciendo explícitamente en clase que el principio es fácil a propósito.</li>
+        <li><b>Un equipo que se encuentra la concurrencia en la última sesión.</b> Se evita con el control duro de la sesión 4.</li>
+        <li><b>Entornos que no funcionan el primer día.</b> Causa habitual de perder la sesión 1 entera. Se ataca con el repositorio semilla y con una verificación de Docker y JDK anunciada la semana anterior.</li>
+        <li><b>Un equipo que se desvía al <em>frontend</em>.</b> Se evita excluyendo el <em>frontend</em> del alcance por escrito, no confiando en que se resistan.</li>
+        <li><b>Modelo de datos defectuoso tras la sesión 2.</b> El error más caro disponible en este proyecto, porque se paga en la sesión 6. Se evita con la revisión obligatoria de esquema antes de cerrar la sesión 2.</li>
+        <li><b>Un equipo que va por delante.</b> Es la función del nivel Élite; UC-34 y UC-35 dan trabajo de sobra.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="h">Punto único de dependencia</div>
+    <p>La asignatura descansa sobre <b>UC-14 y su test de 50 hilos</b>. El resto de casos de uso son sólidos, pero material comparable existe en muchos enunciados; este es el que marca la diferencia entre un ejercicio de usar Spring Boot y un ejercicio de ingeniería. Si el calendario se degrada, es lo último que se toca.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Aforo · catálogo de casos de uso, plan de sesiones y criterios de evaluación · documento de trabajo del equipo docente</p>
+</footer>
+
+</div>

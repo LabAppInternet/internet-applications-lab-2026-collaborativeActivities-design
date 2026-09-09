@@ -1,0 +1,521 @@
+<title>API de Aforo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --ground:#F6F3F5; --surface:#FFFFFF; --surface-2:#EFEAEE; --sunk:#EBE5EA;
+  --ink:#1C1620; --ink-2:#4C4353; --ink-3:#7C7385;
+  --rule:#DED6DD; --rule-strong:#C3B8C3;
+  --accent:#8E1F45; --accent-2:#B8305C; --accent-soft:#F7E8EE;
+  --get:#276F53; --get-soft:#E4F0EA;
+  --post:#9E650D; --post-soft:#F7EEDC;
+  --put:#3F4A63; --put-soft:#E7EAF1;
+  --del:#7F3636; --del-soft:#F5E5E5;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#151119; --surface:#1E1922; --surface-2:#282230; --sunk:#120E16;
+  --ink:#F0EAF1; --ink-2:#BEB3C1; --ink-3:#8D8397;
+  --rule:#332B3A; --rule-strong:#4C4255;
+  --accent:#E87BA1; --accent-2:#F2A0BD; --accent-soft:#37202B;
+  --get:#63C79B; --get-soft:#1B2E26;
+  --post:#DFA84B; --post-soft:#312716;
+  --put:#9AA8C7; --put-soft:#22283A;
+  --del:#E08585; --del-soft:#33201F;
+}}
+:root[data-theme="dark"]{
+  --ground:#151119; --surface:#1E1922; --surface-2:#282230; --sunk:#120E16;
+  --ink:#F0EAF1; --ink-2:#BEB3C1; --ink-3:#8D8397;
+  --rule:#332B3A; --rule-strong:#4C4255;
+  --accent:#E87BA1; --accent-2:#F2A0BD; --accent-soft:#37202B;
+  --get:#63C79B; --get-soft:#1B2E26;
+  --post:#DFA84B; --post-soft:#312716;
+  --put:#9AA8C7; --put-soft:#22283A;
+  --del:#E08585; --del-soft:#33201F;
+}
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:16px; line-height:1.62; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px; margin:0 auto; padding:0 24px}
+p{margin:0} .prose{max-width:66ch}
+h1,h2,h3,h4{margin:0; text-wrap:balance}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.855em; background:var(--surface-2); color:var(--ink); padding:.1em .34em; border-radius:2px; word-break:break-word}
+a{color:var(--accent); text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--accent-2); outline-offset:3px}
+
+.marquee{background:var(--sunk); border-bottom:1px solid var(--rule); padding:52px 0 0}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3)}
+h1{font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:800;
+  font-size:clamp(58px,11vw,120px); line-height:.82; margin:14px 0 0}
+.tagline{font-size:clamp(18px,2.2vw,23px); line-height:1.34; color:var(--ink-2); max-width:36ch; margin-top:20px}
+.tagline b{color:var(--ink); font-weight:600}
+.stubrow{display:flex; flex-wrap:wrap; margin-top:34px; border-top:1px solid var(--rule); border-bottom:1px dashed var(--rule-strong)}
+.stub{flex:1 1 140px; padding:14px 18px 15px; border-right:1px solid var(--rule)}
+.stub:last-child{border-right:0}
+.stub .k{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); display:block}
+.stub .v{font-family:"Big Shoulders Display",sans-serif; font-weight:700; font-size:26px; line-height:1.1; margin-top:3px}
+.stub .v small{font-family:"IBM Plex Sans",sans-serif; font-size:12px; font-weight:500; color:var(--ink-2)}
+
+section{padding:58px 0 4px}
+.sechead{display:flex; align-items:baseline; gap:14px; margin-bottom:8px; flex-wrap:wrap}
+.sechead .tag{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); font-weight:600}
+h2{font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:700;
+  font-size:clamp(36px,5vw,50px); line-height:.98}
+h3.grp{font-family:"IBM Plex Sans",sans-serif; font-size:19px; font-weight:600; margin:36px 0 2px;
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+h3.grp span.uc{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--accent); font-weight:500}
+.grpnote{font-size:14.5px; color:var(--ink-2); margin:6px 0 10px; max-width:74ch}
+.lede{color:var(--ink-2); margin-top:14px; margin-bottom:28px}
+hr.rule{border:0; border-top:1px solid var(--rule); margin:0}
+
+/* endpoints */
+.ep{border:1px solid var(--rule); border-bottom:0; background:var(--surface)}
+.ep:last-of-type{border-bottom:1px solid var(--rule); border-radius:0 0 3px 3px}
+.ep:first-of-type{border-radius:3px 3px 0 0}
+.ep .line{display:flex; gap:12px; align-items:baseline; padding:13px 18px 6px; flex-wrap:wrap}
+.verb{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; letter-spacing:.08em;
+  padding:3px 7px 2px; border-radius:2px; border:1px solid; min-width:58px; text-align:center}
+.verb.get{background:var(--get-soft); color:var(--get); border-color:var(--get)}
+.verb.post{background:var(--post-soft); color:var(--post); border-color:var(--post)}
+.verb.put{background:var(--put-soft); color:var(--put); border-color:var(--put)}
+.verb.del{background:var(--del-soft); color:var(--del); border-color:var(--del)}
+.path{font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600; color:var(--ink); word-break:break-all}
+.path em{font-style:normal; color:var(--accent)}
+.role{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-3); margin-left:auto; white-space:nowrap}
+.ep .body{padding:0 18px 14px 88px; font-size:14.5px; color:var(--ink-2)}
+@media(max-width:620px){ .ep .body{padding-left:18px} .role{margin-left:0} }
+.ep .body b{color:var(--ink); font-weight:600}
+.codes{display:flex; gap:7px; flex-wrap:wrap; margin-top:8px}
+.code{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; padding:2px 6px 1px;
+  border-radius:2px; background:var(--surface-2); color:var(--ink-2); white-space:nowrap}
+.code.ok{background:var(--get-soft); color:var(--get)}
+.code.err{background:var(--del-soft); color:var(--del)}
+.pin{font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600; letter-spacing:.06em;
+  color:var(--accent); background:var(--accent-soft); padding:2px 6px 1px; border-radius:2px; white-space:nowrap}
+
+.tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:3px; background:var(--surface); margin-top:16px}
+table{border-collapse:collapse; width:100%; min-width:720px; font-size:14.5px}
+th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--rule); vertical-align:top}
+thead th{background:var(--surface-2); font-family:"IBM Plex Mono",monospace; font-size:10px;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td.lab{font-weight:600; color:var(--ink); white-space:nowrap}
+td.mono{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--accent); line-height:1.7}
+td.ev{color:var(--ink-2)}
+
+.decision{display:grid; grid-template-columns:34px 1fr; gap:0 15px; align-items:start;
+  border:1px solid var(--rule); border-bottom:0; background:var(--surface); padding:15px 18px}
+.decision:last-of-type{border-bottom:1px solid var(--rule)}
+.decision .n{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; color:var(--accent);
+  border:1px solid var(--rule-strong); border-radius:50%; width:26px; height:26px;
+  display:flex; align-items:center; justify-content:center; margin-top:2px}
+.decision b{font-size:15.5px; font-weight:600; display:block; margin-bottom:3px}
+.decision span{font-size:14.5px; color:var(--ink-2)}
+
+pre{background:var(--sunk); border:1px solid var(--rule); border-radius:3px; padding:14px 16px;
+  overflow-x:auto; margin:12px 0 0; font-family:"IBM Plex Mono",monospace; font-size:12.5px;
+  line-height:1.62; color:var(--ink-2)}
+pre b{color:var(--accent); font-weight:600}
+pre i{color:var(--ink-3); font-style:normal}
+
+.callout{background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--accent);
+  border-radius:0 3px 3px 0; padding:17px 20px 19px; margin:24px 0}
+.callout .h{font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:600;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--accent); margin-bottom:7px}
+.callout p{font-size:15px; color:var(--ink-2)} .callout p+p{margin-top:9px}
+.callout b{color:var(--ink); font-weight:600}
+footer{border-top:1px solid var(--rule); margin-top:60px; padding:26px 0 46px}
+footer p{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3)}
+</style>
+
+<div class="marquee">
+  <div class="wrap">
+    <div class="eyebrow">Document intern del professorat &middot; referència completa</div>
+    <h1>API de Aforo</h1>
+    <p class="tagline">Diseño completo de la API REST. <b>Referencia del equipo docente, no entregable del alumnado</b>, que la irá diseñando de forma incremental.</p>
+    <div class="stubrow">
+      <div class="stub"><span class="k">Endpoints</span><div class="v">36 <small>del núcleo · 43 con extensiones</small></div></div>
+      <div class="stub"><span class="k">Fijados por la suite</span><div class="v">7 <small>el resto queda libre</small></div></div>
+      <div class="stub"><span class="k">Formato de error</span><div class="v">RFC 9457 <small>problem+json</small></div></div>
+      <div class="stub"><span class="k">Complemento de</span><div class="v">Aforo <small>catálogo y modelo</small></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<section>
+  <div class="callout" style="margin-top:44px">
+    <div class="h">Para qué sirve este documento y para qué no</div>
+    <p><b>Es la referencia interna del profesorado.</b> Se necesita por una razón práctica: no se puede escribir la suite de aceptación contra una API que no está especificada. También sirve para verificar que ningún caso de uso se queda sin endpoints y que ningún endpoint queda huérfano.</p>
+    <p><b>No se entrega al alumnado tal cual.</b> En la reunión del 4 de septiembre se acordó que el diseño de la API es una actividad de aprendizaje incremental: cada conjunto de casos de uso genera la necesidad de diseñar su parte. Cómo se le va pidiendo está por decidir.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="tag">Contradicción resuelta</span></div>
+  <h2>Qué parte del contrato queda fijada</h2>
+  <p class="lede prose">Hay una tensión entre dos acuerdos: que el alumnado diseñe la API de forma incremental, y que el profesorado entregue una suite de aceptación no modificable. <b>Un test no puede llamar a un endpoint que no conoce.</b> Si la suite hace <code>POST /performances/{id}/holds</code>, esa ruta ya está decidida.</p>
+  <p class="lede prose">La salida no es renunciar a ninguna de las dos cosas, sino separar explícitamente qué queda cerrado y por qué. <b>Siete endpoints</b> quedan fijados porque la suite los toca; van marcados con <span class="pin">SUITE</span> en el catálogo. Los otros treinta y uno son terreno del alumnado, y ahí se puede corregir el diseño en vez de imponerlo.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Endpoint fijado</th><th>Qué test lo obliga</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">POST /auth/login</td><td class="ev">Todos los tests necesitan un testigo para llamar a cualquier otra cosa.</td></tr>
+        <tr><td class="mono">GET /events</td><td class="ev">Test de conteo de sentencias: 20 eventos en 3 sentencias o menos.</td></tr>
+        <tr><td class="mono">POST /performances/{id}/holds</td><td class="ev">El test de los cincuenta hilos. Es el endpoint más fijado de todos.</td></tr>
+        <tr><td class="mono">POST /orders</td><td class="ev">Test de idempotencia: diez envíos concurrentes con la misma clave.</td></tr>
+        <tr><td class="mono">POST /tickets/{code}/validations</td><td class="ev">Test del doble escaneo simultáneo.</td></tr>
+        <tr><td class="mono">GET /me/orders/{id}</td><td class="ev">Matriz de acceso cruzado por roles: el pedido de otro devuelve 404.</td></tr>
+        <tr><td class="mono">GET /performances/{id}/seats</td><td class="ev">Test de huella de memoria sobre 20.000 butacas.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Convenciones</span></div>
+  <h2>Reglas aplicadas en todo el catálogo</h2>
+  <p class="lede prose">Se enuncian aquí una sola vez para que la tabla de endpoints no las repita. Son también el material de la actividad de diseño de API: al alumnado se le puede dar esta sección sin darle el catálogo.</p>
+
+  <div class="decision">
+    <div class="n">1</div>
+    <div><b>Recursos en plural y en inglés; las acciones que no son CRUD se modelan como subrecurso.</b><span>Las rutas son identificadores de código y van en inglés, como el resto del proyecto. Publicar un evento no es <code>POST /events/{id}/publish</code> sino <code>POST /events/{id}/publication</code>: se crea una publicación. La regla evita el verbo colgado de la URL y obliga a preguntarse qué recurso se está creando, que suele aclarar el diseño.</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">2</div>
+    <div><b>Alcance por propietario en la ruta, no en la consulta.</b><span><code>/me/events</code> y no <code>/events?mine=true</code>. No es estética: hace que el filtro de propiedad sea <b>estructural</b>, que es exactamente lo que pide UC-09 —filtrar dentro de la consulta en lugar de comprobar después de leer—. La forma de la API puede hacer que el IDOR sea más difícil de cometer, y ese es un argumento de diseño que merece explicarse en clase.</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">3</div>
+    <div><b>Errores en <code>application/problem+json</code>, según RFC 9457.</b><span>Un <code>type</code> por error de dominio, más <code>title</code>, <code>status</code> y <code>detail</code>. Es estándar, cuesta poco y hace que los tests de error sean legibles: se afirma sobre el <code>type</code>, no sobre una cadena de texto. Los campos adicionales del problema —por ejemplo qué butacas fallaron— van al mismo objeto.</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">4</div>
+    <div><b>Paginación por cursor, nunca por número de página.</b><span><code>?limit=&amp;after=</code>, y la respuesta lleva el cursor siguiente. Es coherente con la paginación por clave de UC-11 y por el mismo motivo: bajo inserción concurrente, <code>?page=</code> salta o repite filas. La API y la consulta cuentan la misma historia.</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">5</div>
+    <div><b>Idempotencia por cabecera en las operaciones que cobran.</b><span><code>Idempotency-Key</code> obligatoria en <code>POST /orders</code>. El reintento con la misma clave devuelve <b>la respuesta original y el mismo código</b>, no un error. Si llega la misma clave con un cuerpo distinto, <code>422</code>.</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">6</div>
+    <div><b>Códigos de estado con criterio, no por costumbre.</b><span><code>201</code> con <code>Location</code> al crear. <code>204</code> cuando no hay cuerpo. <code>409</code> cuando la petición era válida y lo que cambió fue el estado —la butaca ya está cogida—. <code>422</code> cuando la petición está bien formada pero es semánticamente imposible. <code>404</code> en lugar de <code>403</code> para recursos ajenos, para no confirmar que existen.</span></div>
+  </div>
+  <div class="decision">
+    <div class="n">7</div>
+    <div><b>Fuera del alcance a propósito.</b><span><b>HATEOAS</b> pasa a Extensión o Élite: en cinco años de asignatura el alumnado nunca ha llegado a necesitarlo, y ponerlo en el núcleo sería decorativo. <b>El versionado de API</b> queda fuera del todo: el sistema tiene un solo cliente y se despliega una vez; versionar aquí sería enseñar una ceremonia sin el problema que la justifica.</span></div>
+  </div>
+
+  <div class="callout">
+    <div class="h">Forma del error, para fijarla de una vez</div>
+<pre><i>HTTP/1.1 409 Conflict</i>
+<i>Content-Type: application/problem+json</i>
+
+{
+  "<b>type</b>":   "https://aforo.tecnocampus.cat/problems/seats-unavailable",
+  "<b>title</b>":  "Some seats are no longer available",
+  "<b>status</b>": 409,
+  "<b>detail</b>": "2 of the 3 requested seats were taken while you were choosing",
+  "<b>unavailableSeats</b>": ["A-7-13", "A-7-14"]
+}</pre>
+    <p style="margin-top:12px">El campo <code>unavailableSeats</code> es lo que permite al cliente reintentar con otra selección sin volver a pedir el mapa entero. Y en los tests se afirma sobre <code>type</code>, que es estable, en lugar de sobre el mensaje, que no lo es.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Catálogo</span></div>
+  <h2>Treinta y seis endpoints de núcleo</h2>
+  <p class="lede prose">Agrupados por recurso, más siete esbozados de Extensión y Élite. Cada uno indica el rol que lo puede llamar, los códigos que puede devolver y el caso de uso al que sirve. Los marcados con <span class="pin">SUITE</span> quedan fijados por la suite de aceptación.</p>
+
+  <h3 class="grp">Autenticación e identidad <span class="uc">UC-04 · UC-23</span></h3>
+  <p class="grpnote">La versión mínima es de N0; el refresco con rotación y detección de reutilización llega en UC-23, ya en N3. El fraccionamiento es deliberado: JWT completo en la semana 2 era el muro que se decidió quitar.</p>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/auth/register</span><span class="role">público</span></div>
+    <div class="body">Alta de cuenta. Responde igual exista o no el correo, para no filtrar quién tiene cuenta. Envía el enlace de verificación fuera de la transacción.
+      <div class="codes"><span class="code ok">202</span><span class="code err">422 datos inválidos</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/auth/verifications</span><span class="role">público</span></div>
+    <div class="body">Consume el testigo de verificación del correo. Un solo uso.
+      <div class="codes"><span class="code ok">204</span><span class="code err">410 testigo usado o caducado</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/auth/login</span><span class="role">público</span><span class="pin">SUITE</span></div>
+    <div class="body">Devuelve el testigo de acceso y el de refresco. Fijado por la suite porque todos los demás tests necesitan autenticarse.
+      <div class="codes"><span class="code ok">200</span><span class="code err">401</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/auth/refresh</span><span class="role">público</span></div>
+    <div class="body">Rotación: consume el refresco y emite uno nuevo. <b>Si llega uno ya consumido, se invalida la familia entera</b> y responde 401 (UC-23).
+      <div class="codes"><span class="code ok">200</span><span class="code err">401 reutilización detectada</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/auth/logout</span><span class="role">autenticado</span></div>
+    <div class="body">Revoca la familia de refrescos del dispositivo actual.
+      <div class="codes"><span class="code ok">204</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me</span><span class="role">autenticado</span></div>
+    <div class="body">Perfil de la cuenta actual, con su rol. Es el endpoint que hace visible el alcance por propietario del resto.
+      <div class="codes"><span class="code ok">200</span></div></div>
+  </div>
+
+  <h3 class="grp">Recintos y mapa de sala <span class="uc">UC-01 · UC-10</span></h3>
+  <p class="grpnote">CRUD honesto salvo la importación, que es donde aparece el volumen. La importación devuelve <code>200</code> y no <code>202</code>: es síncrona a propósito, porque el objetivo docente es que midan cuánto tarda.</p>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/venues</span><span class="role">operador</span></div>
+    <div class="body">Alta de recinto.<div class="codes"><span class="code ok">201 + Location</span><span class="code err">409 nombre duplicado</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/venues</span><span class="role">operador</span></div>
+    <div class="body">Listado paginado por cursor.<div class="codes"><span class="code ok">200</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/venues/<em>{id}</em></span><span class="role">operador</span></div>
+    <div class="body">Detalle. <b>No</b> incluye las 20.000 butacas: para eso está el mapa.<div class="codes"><span class="code ok">200</span><span class="code err">404</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb put">PUT</span><span class="path">/venues/<em>{id}</em></span><span class="role">operador</span></div>
+    <div class="body">Sustitución completa de los datos del recinto.<div class="codes"><span class="code ok">200</span><span class="code err">404</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/venues/<em>{id}</em>/seat-map</span><span class="role">operador</span></div>
+    <div class="body">Importación masiva del mapa de sala en CSV. <b>Idempotente por construcción:</b> reimportar el mismo fichero actualiza y no duplica. Es el endpoint de UC-10 y el que se mide contra el presupuesto de 10 s para 20.000 butacas.
+      <div class="codes"><span class="code ok">200 + resumen</span><span class="code err">422 fichero inválido</span></div></div>
+  </div>
+  <h3 class="grp">Eventos y funciones · gestión del promotor <span class="uc">UC-02 · UC-05 · UC-06 · UC-07 · UC-09</span></h3>
+  <p class="grpnote">Todo bajo <code>/me/</code>, que es donde la autorización por propiedad se vuelve estructural. Un promotor no puede escribir una ruta que le dé acceso al evento de otro, porque la ruta no admite otro sujeto que él mismo.</p>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/me/events</span><span class="role">promotor</span></div>
+    <div class="body">Crea un evento en borrador.<div class="codes"><span class="code ok">201 + Location</span><span class="code err">404 recinto inexistente</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/events</span><span class="role">promotor</span></div>
+    <div class="body">Solo los eventos propios. El filtro no es un parámetro: es la ruta.<div class="codes"><span class="code ok">200</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/events/<em>{id}</em></span><span class="role">promotor</span></div>
+    <div class="body">Detalle de gestión, con estado e invariantes pendientes para publicar.<div class="codes"><span class="code ok">200</span><span class="code err">404 ajeno o inexistente</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb put">PUT</span><span class="path">/me/events/<em>{id}</em></span><span class="role">promotor</span></div>
+    <div class="body">Solo mientras está en borrador. Un evento en venta no se edita así.<div class="codes"><span class="code ok">200</span><span class="code err">409 estado no editable</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/me/events/<em>{id}</em>/publication</span><span class="role">promotor</span></div>
+    <div class="body"><b>La transición de estado como recurso.</b> Si falta inventario o alguna zona sin precio, devuelve 409 con el <code>type</code> que identifica la invariante incumplida. Es el endpoint que hace visible la máquina de estados de UC-06.
+      <div class="codes"><span class="code ok">200</span><span class="code err">409 invariante incumplida</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/me/events/<em>{id}</em>/cancellation</span><span class="role">promotor</span></div>
+    <div class="body">Estado terminal. Dispara el reembolso masivo de UC-29 si está en el alcance.<div class="codes"><span class="code ok">202</span><span class="code err">409 transición ilegal</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/me/events/<em>{id}</em>/performances</span><span class="role">promotor</span></div>
+    <div class="body">Programa una función y <b>materializa su inventario</b> a partir del mapa del recinto. Es el endpoint de UC-07 y el que no debe cargar 20.000 entidades para hacerlo.
+      <div class="codes"><span class="code ok">201 + Location</span><span class="code err">409 evento sin recinto</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb put">PUT</span><span class="path">/me/performances/<em>{id}</em>/prices</span><span class="role">promotor</span></div>
+    <div class="body">Sustituye la tabla de precios completa: zona × tarifa. <code>PUT</code> y no <code>PATCH</code> porque la invariante de cobertura se verifica sobre el conjunto, no sobre un cambio suelto (UC-05).
+      <div class="codes"><span class="code ok">200</span><span class="code err">422 zona sin precio</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb put">PUT</span><span class="path">/me/performances/<em>{id}</em>/withheld-seats</span><span class="role">promotor</span></div>
+    <div class="body">Butacas inhabilitadas por producción: mesa de sonido, escenario central.<div class="codes"><span class="code ok">200</span><span class="code err">409 butaca ya vendida</span></div></div>
+  </div>
+
+  <h3 class="grp">Catálogo público <span class="uc">UC-03 · UC-11 · UC-12</span></h3>
+  <p class="grpnote">Sin autenticación. Es donde vive el N+1 y donde el diseño de la respuesta se encuentra con la lección de memoria.</p>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/events</span><span class="role">público</span><span class="pin">SUITE</span></div>
+    <div class="body">Listado paginado con filtros: <code>?city=&amp;from=&amp;to=&amp;genre=&amp;maxPrice=&amp;limit=&amp;after=</code>. Cada elemento lleva recinto, imagen, precio mínimo e indicador cualitativo de disponibilidad —<em>available</em>, <em>limited</em>, <em>soldOut</em>—, nunca el número exacto.
+      <div class="codes"><span class="code ok">200</span></div>
+      <b style="display:block; margin-top:8px">Fijado por la suite:</b> el test de conteo exige que estos 20 elementos se resuelvan en 3 sentencias SQL o menos.</div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/events/<em>{id}</em></span><span class="role">público</span></div>
+    <div class="body">Ficha pública con sus funciones. Solo eventos en venta.<div class="codes"><span class="code ok">200</span><span class="code err">404</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/performances/<em>{id}</em></span><span class="role">público</span></div>
+    <div class="body">Detalle de la función: horario, zonas, precios por tarifa y ventana de venta.<div class="codes"><span class="code ok">200</span><span class="code err">404</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/performances/<em>{id}</em>/seats</span><span class="role">público</span><span class="pin">SUITE</span></div>
+    <div class="body"><b>Comprimido por sector y fila</b>, no 20.000 objetos JSON. Cada fila lleva su rango de números y un mapa compacto de estados. No revela quién retiene una butaca ni cuánto le queda. Una retención caducada se ve libre aunque el barrido no haya pasado.
+      <div class="codes"><span class="code ok">200</span><span class="code err">404</span></div>
+      <b style="display:block; margin-top:8px">Fijado por la suite:</b> test de huella de memoria y latencia sobre una función de 20.000 butacas.</div>
+  </div>
+
+  <h3 class="grp">Retenciones <span class="uc">UC-14 · UC-15 · UC-16</span></h3>
+  <p class="grpnote">El corazón del proyecto. La retención es un recurso de primera clase porque tiene ciclo de vida propio: nace, caduca sola y la mayoría muere sin llegar a pedido.</p>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/performances/<em>{id}</em>/holds</span><span class="role">asistente</span><span class="pin">SUITE</span></div>
+    <div class="body">El cuerpo lleva <code>seatIds</code> para butaca numerada o <code>quantity</code> para admisión general, nunca los dos. Devuelve la retención con su <code>expiresAt</code>.
+      <div class="codes"><span class="code ok">201 + Location</span><span class="code err">409 butacas no disponibles</span><span class="code err">409 límite por persona</span><span class="code err">409 aforo insuficiente</span></div>
+      <b style="display:block; margin-top:8px">Fijado por la suite:</b> el test de los cincuenta hilos. Es el endpoint más cerrado de todos, y el <code>409</code> debe llevar <code>unavailableSeats</code> para que el test distinga un rechazo limpio de un error del servidor.</div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/holds/<em>{id}</em></span><span class="role">asistente</span></div>
+    <div class="body">Estado y tiempo restante. Solo el titular.<div class="codes"><span class="code ok">200</span><span class="code err">404 ajena</span><span class="code err">410 caducada</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb del">DELETE</span><span class="path">/holds/<em>{id}</em></span><span class="role">asistente</span></div>
+    <div class="body">Liberar antes de tiempo. Devuelve las butacas al inventario y la cuota a la persona.<div class="codes"><span class="code ok">204</span><span class="code err">409 ya confirmada</span></div></div>
+  </div>
+  <h3 class="grp">Pedidos, cobro y emisión <span class="uc">UC-08 · UC-18 · UC-19 · UC-20</span></h3>
+  <p class="grpnote">El cobro va <b>dentro</b> de la creación del pedido, síncrono. Un endpoint menos y encaja con cómo están escritos UC-18 y UC-19: la confirmación recibe la retención y el testigo de pago y devuelve el pedido ya emitido o marcado para conciliación.</p>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/orders/quote</span><span class="role">asistente</span></div>
+    <div class="body">Desglose del importe <b>sin crear nada</b>: base, gastos de gestión, impuestos y total, línea a línea. Permite enseñar el total antes de comprometer la compra, y es donde se prueba el reparto del céntimo de UC-08.
+      <div class="codes"><span class="code ok">200</span><span class="code err">410 retención caducada</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/orders</span><span class="role">asistente</span><span class="pin">SUITE</span></div>
+    <div class="body">Cabecera <code>Idempotency-Key</code> obligatoria. El cuerpo lleva el identificador de la retención y el testigo de pago. Revalida la retención <b>dentro de la misma transacción</b>, cobra, marca las butacas como vendidas y emite las entradas.
+      <div class="codes"><span class="code ok">201 + Location</span><span class="code err">402 pago rechazado</span><span class="code err">409 retención caducada</span><span class="code err">422 clave repetida con otro cuerpo</span></div>
+      <b style="display:block; margin-top:8px">Fijado por la suite:</b> diez envíos concurrentes con la misma clave deben producir un pedido, un cobro y diez respuestas idénticas, con el mismo código de estado.</div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/orders</span><span class="role">asistente</span></div>
+    <div class="body">Pedidos propios, paginados por cursor.<div class="codes"><span class="code ok">200</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/orders/<em>{id}</em></span><span class="role">asistente</span><span class="pin">SUITE</span></div>
+    <div class="body">Detalle con el desglose congelado y las entradas emitidas.
+      <div class="codes"><span class="code ok">200</span><span class="code err">404 ajeno</span></div>
+      <b style="display:block; margin-top:8px">Fijado por la suite:</b> la matriz de acceso cruzado. El pedido de otra persona devuelve <code>404</code> y no <code>403</code>, para no confirmar que existe.</div>
+  </div>
+
+  <h3 class="grp">Entradas <span class="uc">UC-20 · UC-21</span></h3>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/tickets</span><span class="role">asistente</span></div>
+    <div class="body">Entradas de las que la persona es titular, incluidas las recibidas por transferencia.<div class="codes"><span class="code ok">200</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/tickets/<em>{id}</em></span><span class="role">asistente</span></div>
+    <div class="body">Incluye el código firmado para el QR. <b>Firmado, no cifrado:</b> el contenido es público, así que no lleva nombre ni correo ni importe (UC-20).<div class="codes"><span class="code ok">200</span><span class="code err">404 ajena</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/me/tickets/<em>{id}</em>/transfers</span><span class="role">asistente</span></div>
+    <div class="body"><em>Extensión (UC-27).</em> Propone la transferencia; el receptor debe aceptarla. Invalida el código anterior al completarse.<div class="codes"><span class="code ok">201</span><span class="code err">409 ya utilizada</span></div></div>
+  </div>
+
+  <h3 class="grp">Acceso al recinto <span class="uc">UC-22</span></h3>
+  <p class="grpnote">La validación es un recurso y no un cambio de campo: <code>POST …/validations</code> crea un intento de validación. Encaja natural con devolver «ya utilizada a las 20:14 en la puerta 3», que con un <code>PUT</code> queda forzado.</p>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/tickets/<em>{code}</em>/validations</span><span class="role">personal de puerta</span><span class="pin">SUITE</span></div>
+    <div class="body">Verifica firma, función, uso previo, estado del evento y ventana horaria. El cuerpo de la petición lleva la puerta. Requisito de latencia: por debajo de 200 ms.
+      <div class="codes"><span class="code ok">201 admitida</span><span class="code err">409 ya utilizada</span><span class="code err">422 firma inválida</span><span class="code err">409 función equivocada</span></div>
+      <b style="display:block; margin-top:8px">Fijado por la suite:</b> dos escaneos concurrentes del mismo código. Uno admite y el otro devuelve <code>409</code> con <code>usedAt</code> y <code>gate</code> en el cuerpo del problema, que es lo que la persona de la puerta necesita para saber qué decir.</div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/performances/<em>{id}</em>/occupancy</span><span class="role">operador</span></div>
+    <div class="body"><em>Élite (UC-37).</em> Aforo en vivo: personas dentro, ritmo por puerta.<div class="codes"><span class="code ok">200</span></div></div>
+  </div>
+
+  <h3 class="grp">Panel del promotor <span class="uc">UC-13</span></h3>
+  <p class="grpnote">Agregación en SQL, no en código. Es donde el N+1 reaparece con otra cara.</p>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/performances/<em>{id}</em>/sales</span><span class="role">promotor</span></div>
+    <div class="body">Ingresos por día, ocupación por zona y ritmo de venta desde la apertura.<div class="codes"><span class="code ok">200</span><span class="code err">404 ajena</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/events/<em>{id}</em>/sales</span><span class="role">promotor</span></div>
+    <div class="body">Comparativa entre las funciones del evento.<div class="codes"><span class="code ok">200</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb get">GET</span><span class="path">/me/performances/<em>{id}</em>/attendees</span><span class="role">promotor</span></div>
+    <div class="body"><em>Extensión (UC-30).</em> Exportación en CSV, respuesta en flujo. Contiene datos personales: control de acceso propio y entrada de auditoría.<div class="codes"><span class="code ok">200 text/csv</span></div></div>
+  </div>
+
+  <h3 class="grp">Extensión y Élite · esbozadas</h3>
+  <p class="grpnote">Una línea cada una. Se detallarán si el equipo que las aborde llega hasta ellas.</p>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/webhooks/payments</span><span class="role">firma HMAC</span></div>
+    <div class="body"><em>UC-26.</em> Endpoint público que no puede exigir testigo: se autentica por firma. Idempotente por identificador del proveedor.<div class="codes"><span class="code ok">204</span><span class="code err">401 firma inválida</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/me/orders/<em>{id}</em>/refunds</span><span class="role">asistente</span></div>
+    <div class="body"><em>UC-28.</em> Devolución total o parcial según la política del evento.<div class="codes"><span class="code ok">201</span><span class="code err">409 fuera de plazo</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/performances/<em>{id}</em>/waiting-list</span><span class="role">asistente</span></div>
+    <div class="body"><em>UC-35, Élite.</em> Apuntarse a la cola de una función agotada.<div class="codes"><span class="code ok">201</span></div></div>
+  </div>
+  <div class="ep">
+    <div class="line"><span class="verb post">POST</span><span class="path">/me/venues/<em>{id}</em>/seat-map/edits</span><span class="role">operador</span></div>
+    <div class="body"><em>UC-39, Élite.</em> Edición larga con bloqueo optimista. Es el único endpoint del proyecto que usa <code>If-Match</code> con <em>ETag</em>, que es la forma HTTP del control de versión.<div class="codes"><span class="code ok">200</span><span class="code err">412 modificado mientras editabas</span></div></div>
+  </div>
+</section>
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Verificación</span></div>
+  <h2>Cada caso de uso con sus endpoints</h2>
+  <p class="lede prose">Comprobación de que ningún caso del núcleo se queda sin API y de que ningún endpoint queda huérfano.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Caso de uso</th><th>Endpoints</th></tr></thead>
+      <tbody>
+        <tr><td class="lab">UC-01 · Recintos</td><td class="mono">POST · GET · GET/{id} · PUT /venues</td></tr>
+        <tr><td class="lab">UC-02 · Eventos en borrador</td><td class="mono">POST · GET · GET/{id} · PUT /me/events</td></tr>
+        <tr><td class="lab">UC-03 · Catálogo básico</td><td class="mono">GET /events · GET /events/{id}</td></tr>
+        <tr><td class="lab">UC-04 · Registro y login</td><td class="mono">POST /auth/register · /auth/verifications · /auth/login · GET /me</td></tr>
+        <tr><td class="lab">UC-05 · Zonas y precios</td><td class="mono">PUT /me/performances/{id}/prices</td></tr>
+        <tr><td class="lab">UC-06 · Publicación</td><td class="mono">POST /me/events/{id}/publication · /cancellation</td></tr>
+        <tr><td class="lab">UC-07 · Funciones e inventario</td><td class="mono">POST /me/events/{id}/performances · PUT /withheld-seats</td></tr>
+        <tr><td class="lab">UC-08 · Cálculo del importe</td><td class="mono">POST /orders/quote</td></tr>
+        <tr><td class="lab">UC-09 · Autorización</td><td class="mono">Transversal · todo el prefijo /me/</td></tr>
+        <tr><td class="lab">UC-10 · Importación del mapa</td><td class="mono">POST /venues/{id}/seat-map</td></tr>
+        <tr><td class="lab">UC-11 · Catálogo eficiente</td><td class="mono">GET /events <span style="color:var(--ink-3)">· mismo endpoint que UC-03, optimizado</span></td></tr>
+        <tr><td class="lab">UC-12 · Mapa de butacas</td><td class="mono">GET /performances/{id}/seats</td></tr>
+        <tr><td class="lab">UC-13 · Panel del promotor</td><td class="mono">GET /me/performances/{id}/sales · /me/events/{id}/sales</td></tr>
+        <tr><td class="lab">UC-14 · Retención</td><td class="mono">POST /performances/{id}/holds · GET · DELETE /holds/{id}</td></tr>
+        <tr><td class="lab">UC-15 · Límite por persona</td><td class="mono">Sin endpoint propio · se manifiesta como 409 en holds</td></tr>
+        <tr><td class="lab">UC-16 · Admisión general</td><td class="mono">POST /performances/{id}/holds <span style="color:var(--ink-3)">· con quantity</span></td></tr>
+        <tr><td class="lab">UC-17 · Expiración</td><td class="mono">Sin endpoint · tarea programada, visible en GET /holds/{id}</td></tr>
+        <tr><td class="lab">UC-18 · Compra idempotente</td><td class="mono">POST /orders <span style="color:var(--ink-3)">· con Idempotency-Key</span></td></tr>
+        <tr><td class="lab">UC-19 · Cobro</td><td class="mono">POST /orders <span style="color:var(--ink-3)">· mismo endpoint, síncrono</span></td></tr>
+        <tr><td class="lab">UC-20 · Confirmación y emisión</td><td class="mono">POST /orders · GET /me/orders/{id}</td></tr>
+        <tr><td class="lab">UC-21 · Credencial firmada</td><td class="mono">GET /me/tickets · GET /me/tickets/{id}</td></tr>
+        <tr><td class="lab">UC-22 · Validación en puerta</td><td class="mono">POST /tickets/{code}/validations</td></tr>
+        <tr><td class="lab">UC-23 · Refresco y rotación</td><td class="mono">POST /auth/refresh · /auth/logout</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <div class="h">Tres casos de uso sin endpoint propio, y está bien</div>
+    <p><b>UC-15</b>, el límite por persona, no es una operación: es una condición que hace fallar la retención. Se manifiesta como un <code>409</code> con su <code>type</code>. <b>UC-17</b>, la expiración, es una tarea programada sin cara pública. Y <b>UC-19</b>, el cobro, comparte endpoint con la confirmación porque se decidió que fuera síncrono.</p>
+    <p>Merece señalarlo porque es una lección de diseño en sí misma: <b>no todo caso de uso genera un endpoint</b>, y buscarle uno a cada uno es una forma habitual de inflar una API.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="sechead"><span class="tag">Siguiente paso</span></div>
+  <h2>Cuándo esto se convierte en OpenAPI</h2>
+  <p class="lede prose">Este documento es prosa a propósito: es lo que se puede leer, discutir y corregir entre dos personas. <b>El <code>openapi.yaml</code> se escribe cuando exista el repositorio semilla</b>, que es cuando se vuelve ejecutable —genera el Swagger UI, valida las peticiones y sirve de contrato para los tests—. Escribirlo ahora, para una API que nadie implementa todavía, sería trabajo que habría que rehacer.</p>
+  <div class="callout">
+    <div class="h">Lo que queda por decidir, y no es de API</div>
+    <p><b>Cómo se le va pidiendo al alumnado.</b> Este catálogo es la referencia completa; lo que está por acordar es la secuencia: qué parte diseñan ellos en cada sesión, qué se les da hecho y en qué momento se les enseña el contrato fijado por la suite. Es la tarea 6 del informe de la reunión y una entrada de la tarea 4, la del catálogo de actividades complementarias.</p>
+    <p>Una posibilidad razonable: darles las convenciones desde el principio —que son corregibles y transferibles— y el contrato fijado solo cuando lleguen al caso de uso que la suite toca. Así diseñan de verdad hasta que el test los obliga a converger, y el momento de converger es en sí mismo una conversación sobre por qué existen los contratos.</p>
+  </div>
+</section>
+
+<footer>
+  <p>API de Aforo · referencia interna del equipo docente · complementa el catálogo de casos de uso y el modelo de datos</p>
+</footer>
+
+</div>
