@@ -1,271 +1,271 @@
-<!-- FONT DE VERITAT · edita aquest fitxer, no l'HTML -->
-<!-- disseny/*.html esta congelat com a guia d'estil -->
+<!-- SOURCE OF TRUTH · edit this file, not the HTML -->
+<!-- disseny/*.html is frozen as a style guide -->
 
-# Aprenentatges de Laboratori d'Aplicacions Internet
+# Learning Outcomes of the Internet Applications Laboratory
 
-*Llistat dels continguts que els estudiants han d'aprendre i aplicar*
+*List of the content that students must learn and apply*
 
-Relació exhaustiva de les competències, tecnologies, patrons i habilitats que els estudiants desenvoluparan durant l'assignatura. No inclou conceptes de programació fonamental (bucles, condicionals, estructures de dades) ni ús superficial de Spring Boot que ja posseeixen.
+Exhaustive list of the competencies, technologies, patterns and skills that students will develop during the course. It does not include fundamental programming concepts (loops, conditionals, data structures) or the superficial use of Spring Boot that they already have.
 
 ---
 
-## Persistència i accés a dades
+## Persistence and data access
 
-### JPA i Hibernate
+### JPA and Hibernate
 
-- **Entitats de domain** com a classes anotades: `@Entity`, `@Table`, `@Column`
-- **Cicle de vida de les entitats**: transient, managed, detached, removed
-- **Relacions**: `@OneToMany`, `@ManyToOne`, `@ManyToMany` amb direccionament i propietari
-- **Composite keys** amb `@Embeddable` i `@EmbeddedId`
-- **Versionat optimista** amb `@Version` (si s'implementa)
-- **Queries** amb JPQL i `@Query` per a casos complexos
-- **Lazy loading** vs eager loading i les implicacions de rendiment
-- **Flush i sincronització** amb la base de dades dentro de transaccions
+- **Domain entities** as annotated classes: `@Entity`, `@Table`, `@Column`
+- **Entity lifecycle**: transient, managed, detached, removed
+- **Relationships**: `@OneToMany`, `@ManyToOne`, `@ManyToMany` with direction and owner
+- **Composite keys** with `@Embeddable` and `@EmbeddedId`
+- **Optimistic versioning** with `@Version` (if implemented)
+- **Queries** with JPQL and `@Query` for complex cases
+- **Lazy loading** vs eager loading and the performance implications
+- **Flush and synchronization** with the database inside transactions
 
 ### Spring Data JPA
 
-- **Repositoris** com a abstraccions del accés a dades: `extends JpaRepository<T, ID>`
-- **Query methods** generats automàticament: `findBy*`, `deleteBy*`, etc.
-- **Paginació**: `Page<T>`, `Pageable`, comparadores (sorts)
-- **Paginació per cursor** com a alternativa per a conjunts grans
-- **Batch operations**: inserció i actualització en massa
+- **Repositories** as data-access abstractions: `extends JpaRepository<T, ID>`
+- **Query methods** generated automatically: `findBy*`, `deleteBy*`, etc.
+- **Pagination**: `Page<T>`, `Pageable`, sorts
+- **Cursor pagination** as an alternative for large data sets
+- **Batch operations**: bulk insert and update
 
-### Transaccions i ACID
+### Transactions and ACID
 
-- **Transaccions explícites** amb `@Transactional`
-- **Nivells d'aïllament** i les seves implicacions: serializable, repeatable read, read committed, read uncommitted
-- **Problemes de concurrència**: dirty read, non-repeatable read, phantom read, lost update, write skew
-- **Rollback manual** i `@Transactional(rollbackFor=...)`
-- **Gestió de transaccions en capa de servei** no de controlador
-
----
-
-## Concurrència en aplicacions Java
-
-### Actualització condicional
-
-- **Patró d'UPDATE condicional**: decidir pel nombre de files afectades
-- **Detecció de conflictes** sense bloqueig: `executeUpdate()` i control del resultat
-- **Retry logic** quan es detecten conflictes
-- **Trade-off entre simplicitat i optimisme** al escollir mecanismes de concurrència
-
-### Ús segur de threads
-
-- **Thread safety en context de Spring**: per defecte els beans són singletons
-- **Immutabilitat** com estratègia de seguretat en threads
-- **ThreadLocal** quan és necessari (ex: context del usuari autenticat)
-- **Race conditions** en lectura-modificació-escriptura
-- **Volatile** i `volatile` variables per a visibilitat entre threads
-
-### Proves de concurrència
-
-- **JUnit amb concurrència**: fixtures per a simular múltiples threads simultanis
-- **Assertions temporals** en tests concurrents
-- **Detecció de race conditions**: no garantir determinisme en tests paral·lels
+- **Explicit transactions** with `@Transactional`
+- **Isolation levels** and their implications: serializable, repeatable read, read committed, read uncommitted
+- **Concurrency problems**: dirty read, non-repeatable read, phantom read, lost update, write skew
+- **Manual rollback** and `@Transactional(rollbackFor=...)`
+- **Transaction management in the service layer**, not the controller
 
 ---
 
-## Seguretat de les aplicacions
+## Concurrency in Java applications
 
-### Autenticació
+### Conditional update
 
-- **Estateless authentication** amb JWT (JSON Web Tokens)
-- **Estructura i validació de JWT**: header, payload, signature
-- **Claims** estàndard i personalitzats
-- **Expiració de tokens** i refresc
-- **Emmagatzemament de secrets** segur
+- **Conditional UPDATE pattern**: decide by the number of affected rows
+- **Conflict detection** without locking: `executeUpdate()` and checking the result
+- **Retry logic** when conflicts are detected
+- **Trade-off between simplicity and optimism** when choosing concurrency mechanisms
 
-### Autorització
+### Thread-safe usage
 
-- **Rol-based access control (RBAC)**: assignment de rols als usuaris
-- **Permissions** i verificació en endpoints
-- **Fine-grained authorization**: accés cruzat per rol
-- **Separation of concerns**: separació entre autenticació i autorització
+- **Thread safety in a Spring context**: beans are singletons by default
+- **Immutability** as a thread-safety strategy
+- **ThreadLocal** when necessary (e.g. the authenticated user's context)
+- **Race conditions** in read-modify-write
+- **Volatile** and `volatile` variables for visibility between threads
+
+### Concurrency testing
+
+- **JUnit with concurrency**: fixtures to simulate multiple simultaneous threads
+- **Timing assertions** in concurrent tests
+- **Race condition detection**: determinism cannot be guaranteed in parallel tests
+
+---
+
+## Application security
+
+### Authentication
+
+- **Stateless authentication** with JWT (JSON Web Tokens)
+- **JWT structure and validation**: header, payload, signature
+- **Standard and custom claims**
+- **Token expiration** and refresh
+- **Secure storage of secrets**
+
+### Authorization
+
+- **Role-based access control (RBAC)**: assigning roles to users
+- **Permissions** and verification at endpoints
+- **Fine-grained authorization**: cross-access by role
+- **Separation of concerns**: separating authentication from authorization
 
 ### Spring Security
 
-- **Filtres de seguretat** en la cadena de Spring
-- **Authentication providers** per a estratègies custom
-- **Authorization rules** amb expressions SpEL
-- **CORS** i gestió de solicituds cross-origin
-- **CSRF** (Cross-Site Request Forgery) quan és rellevant
+- **Security filters** in the Spring chain
+- **Authentication providers** for custom strategies
+- **Authorization rules** with SpEL expressions
+- **CORS** and handling of cross-origin requests
+- **CSRF** (Cross-Site Request Forgery) when relevant
 
-### Validació de dades
+### Data validation
 
-- **Validació al límit de la API** (entrada) vs validació interna (domini)
-- **Constraints** amb annotations: `@NotNull`, `@Email`, `@Size`, etc.
-- **Custom validators** per a lògica de validació complexa
-- **Error responses estructurats** en format RFC 9457 (problem+json)
-- **Diferència entre `422 Unprocessable Entity` i `400 Bad Request`**
+- **Validation at the API boundary** (input) vs internal (domain) validation
+- **Constraints** with annotations: `@NotNull`, `@Email`, `@Size`, etc.
+- **Custom validators** for complex validation logic
+- **Structured error responses** in RFC 9457 format (problem+json)
+- **Difference between `422 Unprocessable Entity` and `400 Bad Request`**
 
 ---
 
-## Disseny d'APIs REST
+## REST API design
 
-### Principis de disseny
+### Design principles
 
-- **Recursos en plural i substantius**: `/events`, `/performances`, `/orders`
-- **Subrecursos** per a accions que no són CRUD: `POST /events/{id}/publication`
-- **Alcance estructural**: `/me/orders` vs `/orders?mine=true`
-- **Idempotència** en operacions que cobren: `Idempotency-Key`
-- **Paginació per cursor**: `/orders?limit=20&after=eyJpZCI...`
+- **Plural nouns as resources**: `/events`, `/performances`, `/orders`
+- **Subresources** for actions that are not CRUD: `POST /events/{id}/publication`
+- **Structural scoping**: `/me/orders` vs `/orders?mine=true`
+- **Idempotency** in operations that charge money: `Idempotency-Key`
+- **Cursor pagination**: `/orders?limit=20&after=eyJpZCI...`
 
-### Respostes i codis d'estat
+### Responses and status codes
 
-- **HTTP status codes amb propòsit**: `201` amb Location, `204`, `409`, `422`, `404`
+- **HTTP status codes with purpose**: `201` with Location, `204`, `409`, `422`, `404`
 - **Structured error responses**: RFC 9457 `application/problem+json`
-- **Error type URIs** identificables i estables
-- **Additional fields** en respostes d'error (ex: `unavailableSeats`)
+- **Identifiable and stable error type URIs**
+- **Additional fields** in error responses (e.g. `unavailableSeats`)
 
-### Negociació de contingut
+### Content negotiation
 
-- **Content-Type** i `Accept` headers
-- **Serialització JSON**: Jackson o framework equivalent
-- **Conversió de date/time** a format ISO 8601
-
----
-
-## Patrons d'arquitectura
-
-### Separació per capes
-
-- **Capa de controlador**: validació de format, delegació a servei
-- **Capa de servei**: lògica de negoci, orquestració de repositoris
-- **Capa de repositori**: accés a dades, queries
-- **Capa de model**: entitats riques, lògica de domini
-
-### Entitats de domini riques
-
-- **Comportament encapsulat** en l'entitat: negació de transaccions, canvis de estat
-- **Invariants de domini** protegits per mètodes
-- **Private setters** per a camps que només es modifiquen via comportament
-- **Value objects** per a conceptes amb identitat única pel valor, no per ID
-
-### Composició vs herència
-
-- **Preferència per composició**: `Embedded` i `Embeddable` en lloc d'herència JPA
-- **Estratègia TABLE_PER_CLASS** si cal múltiples tipus, però preferir composició
+- **Content-Type** and `Accept` headers
+- **JSON serialization**: Jackson or an equivalent framework
+- **Date/time conversion** to ISO 8601 format
 
 ---
 
-## Operacions específiques del sistema
+## Architecture patterns
 
-### Ordre de compra i idempotència
+### Layered separation
 
-- **Claus d'idempotència**: mantenir determinisme amb reintents
-- **Duplicats virtuals**: detectar quan una sol·licitud és una repetició
-- **Resposta consistent**: tornar la mateixa resposta amb la mateixa clau
+- **Controller layer**: format validation, delegation to the service
+- **Service layer**: business logic, orchestration of repositories
+- **Repository layer**: data access, queries
+- **Model layer**: rich entities, domain logic
 
-### Validació de tiquets
+### Rich domain entities
 
-- **Double-scanning**: impossibilitat de validar dues vegades el mateix tiquet
-- **Checks condicionals** en base a l'estat previ
-- **Operacions atòmiques**: validar i canviar estat en una sola consulta
+- **Behavior encapsulated** in the entity: transaction denial, state changes
+- **Domain invariants** protected by methods
+- **Private setters** for fields that are only modified through behavior
+- **Value objects** for concepts whose identity comes from their value, not from an ID
 
-### Reserva de butaques
+### Composition vs inheritance
 
-- **Concurrència extrema**: 50+ threads intentant reservar simultàniament
-- **Selecció de butaques disponibles**: operacions d'actualització condicionada
-- **Rollback automàtic** quan les butaques no són disponibles
-
-### Memòria en gran volum
-
-- **Optimització de queries** per a 20.000+ registres
-- **Streaming o paginació** en lloc de carregar tot en memòria
-- **Índexs de base de dades** per a performance
+- **Preference for composition**: `Embedded` and `Embeddable` instead of JPA inheritance
+- **TABLE_PER_CLASS strategy** if multiple types are needed, but prefer composition
 
 ---
 
-## Proves i qualitat
+## System-specific operations
+
+### Purchase order and idempotency
+
+- **Idempotency keys**: keep determinism under retries
+- **Virtual duplicates**: detect when a request is a repetition
+- **Consistent response**: return the same response for the same key
+
+### Ticket validation
+
+- **Double-scanning**: it must be impossible to validate the same ticket twice
+- **Conditional checks** based on the previous state
+- **Atomic operations**: validate and change state in a single query
+
+### Seat reservation
+
+- **Extreme concurrency**: 50+ threads trying to reserve simultaneously
+- **Selection of available seats**: conditional update operations
+- **Automatic rollback** when the seats are not available
+
+### High-volume memory
+
+- **Query optimization** for 20,000+ records
+- **Streaming or pagination** instead of loading everything into memory
+- **Database indexes** for performance
+
+---
+
+## Testing and quality
 
 ### Unit tests
 
-- **Mocking** de repositoris en tests de servei
-- **Fixtures** i test data
-- **Assertions** sobre el comportament del domini
+- **Mocking** of repositories in service tests
+- **Fixtures** and test data
+- **Assertions** on domain behavior
 
 ### Integration tests
 
-- **TestContainers** o `@DataJpaTest` per a proves amb base de dades real
-- **Transactional tests**: rollback automàtic entre tests
-- **Dades de setup** i teardown
+- **TestContainers** or `@DataJpaTest` for tests with a real database
+- **Transactional tests**: automatic rollback between tests
+- **Setup and teardown data**
 
 ### Acceptance tests
 
-- **Suite de tests proveïda** contra la API HTTP
-- **Casos de test determinats**: concurrència, idempotència, accés cruzat
-- **Análisis de performance**: nombre de sentències SQL, consum de memòria
+- **Provided test suite** against the HTTP API
+- **Specific test cases**: concurrency, idempotency, cross-access
+- **Performance analysis**: number of SQL statements, memory consumption
 
-### Debugging i profiling
+### Debugging and profiling
 
-- **Logging a nivells** (DEBUG, INFO, WARN, ERROR)
-- **Análisis de queries SQL** generades
-- **Profilers** de JVM per a bottlenecks de performance
+- **Logging at levels** (DEBUG, INFO, WARN, ERROR)
+- **Analysis of the generated SQL queries**
+- **JVM profilers** for performance bottlenecks
 
 ---
 
-## Eines i configuració
+## Tools and configuration
 
 ### Maven
 
-- **`pom.xml`**: dependències, plugins, perfils
-- **Cicle de build**: compile, test, package
-- **Spring Boot Maven Plugin** per a executar aplicació
+- **`pom.xml`**: dependencies, plugins, profiles
+- **Build lifecycle**: compile, test, package
+- **Spring Boot Maven Plugin** to run the application
 
-### Base de dades PostgreSQL
+### PostgreSQL database
 
-- **Connexió** dins de Spring Boot
+- **Connection** within Spring Boot
 - **Connection pooling**: HikariCP
-- **Migracions** amb Flyway o Liquibase
-- **Índexs** i queries explicades
+- **Migrations** with Flyway or Liquibase
+- **Indexes** and explained queries
 
-### Git i versionat
+### Git and versioning
 
-- **Commits atòmics** per a cada canvi conceptual
-- **Branches** per a features
-- **Pull requests** amb descripció clara
+- **Atomic commits** for each conceptual change
+- **Branches** for features
+- **Pull requests** with a clear description
 
-### Profiling i monitorització
+### Profiling and monitoring
 
-- **Actuator endpoints** de Spring Boot
-- **Mètriques basiques**: request count, latency
-- **Health checks** personalitzats
-
----
-
-## Soft skills i metodologia
-
-### Treball en equip
-
-- **Resolució de conflictes** de merge
-- **Code review** entre companys
-- **Estímació** de tasques
-- **Gestió de dependències** entre membres
-
-### Comunicació tècnica
-
-- **Redacció de cases d'ús** clars
-- **Documentació** de decisions de disseny
-- **Explicació** de trade-offs arquitectònics
-
-### Aprenentatge incremental
-
-- **Construcció progressiva**: casos d'ús simples primer, complexitat gradual
-- **Feedback continu** de proves de acceptació
-- **Refactorització** quan creix la complexitat
+- **Spring Boot Actuator endpoints**
+- **Basic metrics**: request count, latency
+- **Custom health checks**
 
 ---
 
-## Contexts de grau 3 que es descarten deliberadament
+## Soft skills and methodology
 
-Els següents temes no estan dins de l'assignatura i queden per a assignatures posteriors o especialitzacions:
+### Teamwork
 
-- **Microserveis** i sistemes distribuïts: Sistema monolític per desseny
-- **Hexagonal architecture** (ports i adaptadors): Arquitetura per capes és suficient
-- **Caching distribuït**: Redis o equivalent queda fora de l'assignatura
-- **Event sourcing** o CQRS: Models estàndard ORM
-- **Gestió de secrets** (vaults, rotació): Configuració simple amb `application.properties`
-- **Monitoring avançat** i tracing distribuït: Logging bàsic és suficient
-- **API Gateway** i rate limiting: Responsabilitat del desplegament, no de l'app
-- **GraphQL**: REST és l'estàndard d'aquesta assignatura
-- **Streaming** (ex: WebSockets): Operacions síncrones HTTP solament
+- **Resolution of merge conflicts**
+- **Code review** among peers
+- **Task estimation**
+- **Management of dependencies** between members
+
+### Technical communication
+
+- **Writing clear use cases**
+- **Documentation** of design decisions
+- **Explanation** of architectural trade-offs
+
+### Incremental learning
+
+- **Progressive construction**: simple use cases first, gradual complexity
+- **Continuous feedback** from acceptance tests
+- **Refactoring** as complexity grows
+
+---
+
+## Third-year topics deliberately excluded
+
+The following topics are not part of the course and are left for later courses or specializations:
+
+- **Microservices** and distributed systems: monolithic system by design
+- **Hexagonal architecture** (ports and adapters): layered architecture is sufficient
+- **Distributed caching**: Redis or equivalent is outside the course
+- **Event sourcing** or CQRS: standard ORM models
+- **Secrets management** (vaults, rotation): simple configuration with `application.properties`
+- **Advanced monitoring** and distributed tracing: basic logging is sufficient
+- **API Gateway** and rate limiting: a deployment responsibility, not the app's
+- **GraphQL**: REST is the standard for this course
+- **Streaming** (e.g. WebSockets): synchronous HTTP operations only

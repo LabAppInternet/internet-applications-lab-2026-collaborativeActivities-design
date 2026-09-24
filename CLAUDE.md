@@ -1,64 +1,63 @@
-# Context del projecte
+# Project context
 
-Disseny docent de **Laboratori d'Aplicacions Internet** (TecnoCampus · UPF),
-6 ECTS, tercer curs, primer trimestre, curs 2026-2027. Professorat: Josep Roure
-i Alfredo Rueda.
+Teaching design for **Internet Applications Laboratory** (TecnoCampus · UPF),
+6 ECTS, third year, first term, academic year 2026-2027. Teaching staff: Josep Roure
+and Alfredo Rueda.
 
-Aquest repositori conté **disseny d'activitats amb tècniques d'aprenentatge col·laboratiu'**, no codi de producció.
+This repository contains the **design of activities using collaborative learning techniques**, not production code.
 
-## Restriccions del projecte que es dissenya
+## Constraints of the project being designed
 
-Aquestes restriccions són decisions preses, no preferències obertes. No proposar
-alternatives que les contradiguin sense avisar explícitament que ho fan.
+These constraints are decisions already made, not open preferences. Do not propose
+alternatives that contradict them without explicitly warning that you are doing so.
 
-- **Monolit.** Un sol servei Spring Boot i una sola base de dades PostgreSQL.
-  Microserveis i sistemes distribuïts són contingut del tercer trimestre.
-- **Arquitectura per capes.** Controlador, servei, repositori, model. Ports i
-  adaptadors (hexagonal) són contingut del segon trimestre.
-- **Entitats de domini riques**, no model anèmic.
-- **Un únic mecanisme de concurrència al nucli**: l'`UPDATE` condicional decidint
-  pel nombre de files afectades. Ni bloqueig optimista, ni pessimista, ni nivells
-  d'aïllament. No hi ha columna `version` enlloc. Vegeu `decisions/004`.
-- **Sense herència d'entitats.** Composició. Vegeu `decisions/005`.
-- **Corba de dificultat progressiva**: els primers casos d'ús són senzills a
-  propòsit. Vegeu `decisions/003`.
-- **Punt de partida de l'alumnat.** Porten **Spring Framework bàsic** d'una
-  assignatura anterior —API REST senzilles, controladors, injecció—. **No han vist
-  mai JPA, ni Spring Security, ni concurrència aplicada a Java real.** D'aquí surt
-  una regla de disseny: **no s'apilen dos frameworks nous a la mateixa setmana**, i
-  en particular JPA i Spring Security no comparteixen sessió d'entrada. Vegeu
-  `decisions/009`.
-- **L'assignatura s'imparteix en anglès.** Els documents estan ara en castellà
-  per treballar-los més àgilment; la versió final anirà en anglès, identificadors
-  de codi inclosos.
+- **Monolith.** A single Spring Boot service and a single PostgreSQL database.
+  Microservices and distributed systems are third-term content.
+- **Layered architecture.** Controller, service, repository, model. Ports and
+  adapters (hexagonal) are second-term content.
+- **Rich domain entities**, not an anemic model.
+- **A single concurrency mechanism at the core**: the conditional `UPDATE`, deciding
+  by the number of affected rows. No optimistic locking, no pessimistic locking, no
+  isolation levels. There is no `version` column anywhere. See `decisions/004`.
+- **No entity inheritance.** Composition. See `decisions/005`.
+- **Progressive difficulty curve**: the first use cases are deliberately simple.
+  See `decisions/003`.
+- **Students' starting point.** They bring **basic Spring Framework** from a previous
+  course —simple REST APIs, controllers, injection—. **They have never seen JPA,
+  Spring Security, or concurrency applied to real Java.** This yields a design rule:
+  **two new frameworks are not stacked in the same week**, and in particular JPA and
+  Spring Security do not share an introductory session. See `decisions/009`.
+- **The course is taught in English.** The documents are currently in Spanish so they
+  can be worked on more quickly; the final version will be in English, code
+  identifiers included.
 
-## Flux de treball dels documents
+## Document workflow
 
-**El contingut s'evoluciona en Markdown. L'HTML esta congelat.**
+**Content evolves in Markdown. The HTML is frozen.**
 
-- La font de veritat es `markdown/*.md`, amb els diagrames en Mermaid. Qualsevol
-  millora, correccio o contingut nou va aqui. S'edita a ma o, mes sovint, des de
-  l'IDE amb el Claude Code integrat —millor a VS Code que a IntelliJ IDEA—: prompts
-  i el fitxer Markdown es modifica.
-- `disseny/*.html` **no s'edita mai**. Es conserva perque fixa la guia d'estil del
-  material —les fitxes de cas d'us, les etiquetes de nivell, els colors dels verbs
-  HTTP, les barres de la rubrica— i aquest disseny val molt. Es referencia visual,
-  no contingut viu. Els fitxers estan en nomes lectura al disc.
-- `tools/html2md.py` va fer la conversio una sola vegada i **no s'ha de tornar a
-  executar**: sobreescriuria la font de veritat. Porta un guardia que ho impedeix.
-- **El generador ja existeix**: `tools/md2pdf.py` produeix HTML i PDF des del
-  Markdown aplicant el sistema de disseny de `disseny/`. Els PDF son a `pdf/` i es
-  regeneren, mai s'editen. El mateix generador servira per als enunciats de
-  l'alumnat: nomes canviara el Markdown d'entrada.
+- The source of truth is `markdown/*.md`, with diagrams in Mermaid. Any
+  improvement, correction, or new content goes here. It is edited by hand or, more
+  often, from the IDE with the integrated Claude Code —better in VS Code than in
+  IntelliJ IDEA—: prompts are given and the Markdown file is modified.
+- `disseny/*.html` is **never edited**. It is kept because it fixes the style guide
+  of the material —the use-case cards, the level labels, the colors of the HTTP
+  verbs, the rubric bars— and this design is highly valuable. It is a visual
+  reference, not live content. The files are read-only on disk.
+- `tools/html2md.py` performed the conversion once and **must not be run again**: it
+  would overwrite the source of truth. It has a guard that prevents this.
+- **The generator already exists**: `tools/md2pdf.py` produces HTML and PDF from the
+  Markdown by applying the design system in `disseny/`. The PDFs are in `pdf/` and
+  are regenerated, never edited. The same generator will be used for the student
+  assignment briefs: only the input Markdown will change.
 
-Si una peticio implica tocar un fitxer de `disseny/`, atura't i digues-ho. El canvi
-va al Markdown.
+If a request involves touching a file in `disseny/`, stop and say so. The change
+goes in the Markdown.
 
-## Aprenentatge Col·laboratiu
+## Collaborative Learning
 
-## Registre i to
+## Register and tone
 
-- Registre d'enginyeria i acadèmic. Res de to editorial ni sensacionalista.
-- Terminologia precisa: *lost update*, *write skew*, *read committed*.
-- Les afirmacions es respalden amb mesura, no amb èmfasi. Si una xifra no està
-  mesurada, dir-ho.
+- Engineering and academic register. No editorial or sensationalist tone.
+- Precise terminology: *lost update*, *write skew*, *read committed*.
+- Claims are supported with measurements, not emphasis. If a figure has not been
+  measured, say so.

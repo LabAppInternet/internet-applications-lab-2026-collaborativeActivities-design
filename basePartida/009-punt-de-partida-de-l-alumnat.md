@@ -1,66 +1,68 @@
-# 009 · El punt de partida de l'alumnat
+# 009 · The students' starting point
 
-**Data:** 2026-09-05 · **Estat:** acceptada
+**Date:** 2026-09-05 · **Status:** accepted
 
 ## Context
-Cinc anys impartint l'assignatura, i Josep més. El que segueix no és una hipòtesi
-sobre qui tenim a l'aula: és observació acumulada del professorat, i explica
-decisions del catàleg que altrament semblen arbitràries.
+Five years teaching the course, and Josep longer. What follows is not a hypothesis
+about who we have in the classroom: it is accumulated observation by the teaching
+staff, and it explains catalogue decisions that would otherwise seem arbitrary.
 
-## El que l'alumnat ja porta
-**Spring Framework bàsic**, d'una assignatura anterior: arrencar una aplicació
-Spring Boot, escriure controladors, API REST senzilles, injecció de dependències.
+## What students already bring
+**Basic Spring Framework**, from a previous course: starting a Spring Boot
+application, writing controllers, simple REST APIs, dependency injection.
 
-No és poc i condiciona el disseny en positiu: **l'estructura per capes i el
-controlador no són territori nou**. La sessió 1 pot demanar un endpoint que
-travessi tota la pila el primer dia perquè aquesta part ja la coneixen.
+This is not little, and it shapes the design in a positive way: **the layered
+structure and the controller are not new territory**. Session 1 can ask for an
+endpoint that crosses the whole stack on the first day because they already know
+that part.
 
-## El que NO porta
-- **JPA i el mapatge objecte-relacional.** Cap contacte previ. `@Entity` es veu
-  per primera vegada a UC-01.
-- **Spring Security.** Cap contacte previ.
-- **Concurrència aplicada a Java real.** Poden haver vist fils i exclusió mútua
-  com a teoria; no han vist mai una condició de carrera sobre una base de dades
-  ni han escrit un test que la provoqui.
+## What they do NOT bring
+- **JPA and object-relational mapping.** No previous contact. `@Entity` is seen
+  for the first time in UC-01.
+- **Spring Security.** No previous contact.
+- **Concurrency applied to real Java.** They may have seen threads and mutual
+  exclusion as theory; they have never seen a race condition on a database nor
+  written a test that provokes one.
 
-## Decisió
-**No s'apilen dos frameworks nous a la mateixa setmana.** En particular, **JPA i
-Spring Security no comparteixen la sessió d'entrada**.
+## Decision
+**Two new frameworks are not stacked in the same week.** In particular, **JPA and
+Spring Security do not share the opening session**.
 
-## Motiu
-Els tres blocs que falten —persistència, seguretat i concurrència— són cars cadascun
-pel seu compte. El cost no surt del nombre de conceptes sinó de **quants n'has de
-sostenir alhora**: mapatge, sessió de persistència, cadena de filtres, signatura de
-testimonis i caducitat, tot la mateixa tarda, és la recepta coneguda per perdre
-equips a la segona setmana.
+## Rationale
+The three missing blocks —persistence, security and concurrency— are each costly
+on their own. The cost does not come from the number of concepts but from **how
+many you must hold at the same time**: mapping, persistence session, filter chain,
+token signing and expiry, all in the same afternoon, is the known recipe for
+losing teams in the second week.
 
-L'observació de cinc anys va en aquesta direcció i la teoria de la càrrega
-cognitiva també. **Cap de les dues és una mesura feta aquí**, i convé dir-ho: el
-que tenim és experiència coherent amb la literatura, no evidència pròpia.
+Five years of observation point in this direction, and so does cognitive load
+theory. **Neither is a measurement made here**, and this should be stated: what we
+have is experience consistent with the literature, not evidence of our own.
 
-## Conseqüències
-- **N0 pot donar per sabut el controlador REST i la injecció de dependències.** No
-  pot donar per sabut res de persistència.
-- **La sessió 2 no pot portar el primer mapatge JPA i la cadena de filtres alhora.**
-  És el conflicte concret que es deriva d'aquesta decisió, i és la tasca 2 de la
-  reunió del 4 de setembre.
-- **La sessió 3 és l'escaló més alt de la primera meitat del curs**: demana mesurar
-  i corregir un N+1 una sessió després del primer mapatge d'entitats. No es pot
-  rebaixar sense renunciar al bloc d'eficiència, que és nuclear.
-- **El repositori llavor ha de portar un exemple de mapatge complet** que serveixi
-  de model, no només la configuració. És andamiatge que redueix càrrega sense
-  abaixar l'exigència.
-- **Les eines que no son contingut es queden invisibles.** Flyway n'es el cas
-  clar: el semilla porta l'esquema versionat i la migracio inicial escrita, a N0
-  es copia un fitxer seguint l'exemple i el taller no hi dedica temps. El mecanisme
-  es UC-38, que es Extensio. La regla val per a qualsevol eina que no sigui la
-  llico del dia.
-- **Cronometrar N0 puja de prioritat**: ara no només diu si l'abast hi cap, sinó si
-  dues sessions basten per a un primer contacte amb JPA.
+## Consequences
+- **N0 can take the REST controller and dependency injection for granted.** It
+  cannot take anything about persistence for granted.
+- **Session 2 cannot carry the first JPA mapping and the filter chain at the same
+  time.** This is the concrete conflict that follows from this decision, and it is
+  task 2 of the meeting of 4 September.
+- **Session 3 is the steepest step of the first half of the course**: it asks
+  students to measure and fix an N+1 one session after the first entity mapping.
+  It cannot be lowered without giving up the efficiency block, which is core.
+- **The seed repository must carry a complete mapping example** that serves as a
+  model, not just the configuration. This is scaffolding that reduces load without
+  lowering the standard.
+- **Tools that are not content stay invisible.** Flyway is the clear case: the seed
+  carries the versioned schema and the initial migration already written, at N0 a
+  file is copied following the example, and the workshop spends no time on it. The
+  mechanism is UC-38, which is an Extension. The rule applies to any tool that is
+  not the lesson of the day.
+- **Timing N0 rises in priority**: it now tells us not only whether the scope fits,
+  but whether two sessions are enough for a first contact with JPA.
 
-## Pendent
-El **mecanisme concret** per treure Spring Security de la sessió 2. La proposta és
-[`propostes/001`](../propostes/001-ajornament-de-la-seguretat.md): separar la
-identitat de l'actor de l'autenticació, de manera que les regles de propietat i
-els seus tests s'escriguin des de la sessió 2 i el dia que entri Spring Security
-no calgui tocar-los. **Pendent de valorar entre els dos.**
+## Pending
+The **concrete mechanism** for taking Spring Security out of session 2. The
+proposal is
+[`propostes/001`](../propostes/001-ajornament-de-la-seguretat.md): separate the
+actor's identity from authentication, so that the ownership rules and their tests
+are written from session 2 and, the day Spring Security comes in, they need not be
+touched. **Pending assessment between the two.**

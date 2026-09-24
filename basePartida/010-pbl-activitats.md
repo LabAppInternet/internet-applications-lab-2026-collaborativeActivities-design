@@ -1,49 +1,48 @@
-# 010 · PBL i activitats
+# 010 · PBL and activities
 
-**Data:** 2026-09-07 · **Estat:** acceptada
+**Date:** 2026-09-07 · **Status:** accepted
 
 ## Context
-L'assignatura es basa en aprenentatge basat en projectes (PBL, sigles en alnglès) tot i que no és PBL pur ja que hi ha sessions una mica més teòriques.
-El temps de l'assignatura està organitzat en 9 setmanes, cada setmana un estudiant fa a l'aula 4h en grup petit (30 perseones al grup) i 2h en grup gran (60 persones).
+The course is based on project-based learning (PBL), although it is not pure PBL, since some sessions are more theoretical.
+The course time is organized in 9 weeks; each week a student spends 4 h in the classroom in a small group (30 people per group) and 2 h in a large group (60 people).
 
-El grup petit està pensat per treballar en el projecte i en realitzar activitats d'aprenentatge cooperatiu per poder aprendre el contingut que cal. 
-El grup gran està pensat per aprofundir en temes com ara què ofereix i com s'implementat/estructura un framework com el Spring i Spring Boot. També es pot dedicar, si està justificat, temps a temes més relacionats amb el projecte. En grup gran es poden fer activitats d'aprenentatge cooperatiu més senzilles però 
-hem d'intentar que siguin sessions participatives.
+The small group is meant for working on the project and for carrying out cooperative learning activities to learn the required content.
+The large group is meant for going deeper into topics such as what a framework like Spring and Spring Boot offers and how it is implemented/structured. If justified, time can also be spent on topics more closely related to the project. In the large group, simpler cooperative learning activities can be done, but
+we should try to make the sessions participatory.
 
-De treball personal a casa, els estudiants en dedicaran un 125h al projecte i 25h a la teoria. Aquestes hores es repartiran en les 9 setmanes que dura el curs.
+For independent work at home, students will spend about 125 h on the project and 25 h on theory. These hours will be spread over the 9 weeks of the course.
 
-## Llistat de posibles tipus d'activitats d'aprenentatge col·laboratiu o cooperatiu
-Aquí tens un recull de tècniques d'aprenentatge entre iguals que funcionen bé combinades amb PBL:
+## List of possible types of collaborative or cooperative learning activities
+Here is a collection of peer learning techniques that work well combined with PBL:
 
-**Estructures de cooperació formal**
+**Formal cooperation structures**
 
-- **Puzzle (Jigsaw)** — ja l'has esmentat: cada membre esdevé expert d'una part i l'ensenya als altres.
-- **Grup d'experts invertit (Reverse Jigsaw)** — els experts es reuneixen després per contrastar el que han après i detectar contradiccions o llacunes.
-- **Lectura compartida / lectura per parelles** — un llegeix, l'altre resumeix o fa preguntes; van alternant rols.
-- **1-2-4 (Think-Pair-Share ampliat)** — reflexió individual, després en parella, després en grup de quatre, abans de posar en comú amb tota la classe.
-- **Folis giratoris (Round Robin / Rotating paper)** — cada grup escriu una idea sobre un full que va rotant, i els altres l'amplien o hi afegeixen matisos.
+- **Jigsaw** — as you already mentioned: each member becomes an expert on one part and teaches it to the others.
+- **Reverse Jigsaw** — the experts meet afterwards to compare what they have learned and to detect contradictions or gaps.
+- **Shared reading / paired reading** — one reads, the other summarizes or asks questions; they alternate roles.
+- **1-2-4 (extended Think-Pair-Share)** — individual reflection, then in pairs, then in groups of four, before sharing with the whole class.
+- **Round Robin / Rotating paper** — each group writes an idea on a sheet that rotates, and the others expand it or add nuances.
 
-**Tutoria i suport entre companys**
+**Tutoring and peer support**
 
-- **Tutoria entre iguals (Peer Tutoring)** — un/a alumne/a amb més domini d'una part del projecte ensenya un altre; pot ser fixa o rotativa.
-- **Aprenentatge en parelles amb rols alterns (Pensa-Actua-Revisa)** — un fa, l'altre supervisa i dona feedback, i després s'intercanvien.
-- **Grups base cooperatius** — grups estables durant tot el projecte que es reparteixen rols (coordinador, secretari, portaveu, gestor de materials).
+- **Peer Tutoring** — a student with greater command of one part of the project teaches another; it can be fixed or rotating.
+- **Pair learning with alternating roles (Think-Act-Review)** — one does, the other supervises and gives feedback, and then they swap.
+- **Cooperative base groups** — groups that are stable throughout the project and share roles (coordinator, secretary, spokesperson, materials manager).
 
-**Feedback i revisió entre companys**
+**Peer feedback and review**
 
-- **Revisió per parells (Peer Review) estructurada** — amb rúbrica o pauta clara per donar feedback constructiu sobre una part del projecte o un esborrany.
-- **Dues estrelles i un desig (Two Stars and a Wish)** — cada grup dona dos aspectes positius i una proposta de millora al treball d'un altre grup.
-- **Galeria d'aprenentatge (Gallery Walk)** — els grups exposen el seu treball intermedi i la resta circula deixant comentaris o post-its.
+- **Structured Peer Review** — with a rubric or clear guideline to give constructive feedback on a part of the project or a draft.
+- **Two Stars and a Wish** — each group gives two positive aspects and one improvement proposal on another group's work.
+- **Gallery Walk** — groups display their intermediate work and the rest circulate leaving comments or sticky notes.
 
-**Discussió i construcció de coneixement conjunt**
+**Discussion and joint knowledge building**
 
-- **Controvèrsia acadèmica / debat estructurat** — dos subgrups defensen postures oposades sobre una decisió del projecte i després cerquen consens.
-- **Mapa conceptual col·laboratiu** — es construeix entre tots, afegint-hi i discutint connexions.
-- **Bola de neu (Snowball)** — es comença individualment, es posa en comú en parelles, després en grups de quatre, etc., fins arribar a un consens de classe.
+- **Academic controversy / structured debate** — two subgroups defend opposing positions on a project decision and then seek consensus.
+- **Collaborative concept map** — built by everyone, adding and discussing connections.
+- **Snowball** — starts individually, is shared in pairs, then in groups of four, and so on, until a class consensus is reached.
 
-**Gestió i seguiment del projecte en grup**
+**Group project management and monitoring**
 
-- **Diari de bord compartit / bitàcola de grup** — cada membre hi anota avenços i dubtes, i els companys hi responen.
-- **Contracte d'equip i autoavaluació entre iguals** — els mateixos membres del grup s'avaluen la implicació i la qualitat de la col·laboració.
-- **Scrum/Kanban d'aula** — reparteixen tasques i es fan seguiment mutu de l'estat del projecte, a l'estil metodologies àgils adaptades a l'aula.
-
+- **Shared logbook / group log** — each member records progress and doubts, and peers respond.
+- **Team contract and peer self-assessment** — the group members themselves assess each other's involvement and the quality of the collaboration.
+- **Classroom Scrum/Kanban** — they distribute tasks and mutually monitor the state of the project, in the style of agile methodologies adapted to the classroom.

@@ -1,35 +1,35 @@
-# 008 · Què sabem i què no sabem del pressupost d'hores
+# 008 · What we know and don't know about the hours budget
 
-**Data:** 2026-09-04 · **Estat:** oberta
+**Date:** 2026-09-04 · **Status:** open
 
-## El que està verificat
-De la fitxa oficial: **6 ECTS**, tercer curs, primer trimestre, obligatòria,
-4 h de laboratori + 2 h de magistral per setmana.
+## What is verified
+From the official course sheet: **6 ECTS**, third year, first term, compulsory,
+4 h of laboratory + 2 h of lecture per week.
 
-- 150 h de dedicació per estudiant (6 × 25)
-- 60 h presencials (6 h × 10 setmanes)
-- **90 h fora de l'aula, unes 9 h setmanals**
-- Per equip de quatre: **600 hores-persona**, 240 a l'aula i 360 fora
+- 150 h of student workload (6 × 25)
+- 60 contact hours (6 h × 10 weeks)
+- **90 h outside the classroom, about 9 h per week**
+- Per team of four: **600 person-hours**, 240 in the classroom and 360 outside
 
-Comprovació creuada: 9 sessions × 3,75 h = 33,75 h de laboratori, coherent amb les
-40 h de deu setmanes descomptant festius.
+Cross-check: 9 sessions × 3.75 h = 33.75 h of laboratory, consistent with the
+40 h of ten weeks once holidays are discounted.
 
-## El que NO sabem
-**Què costa realment un cas d'ús d'aquest projecte.** No hi ha cap mesura. Les
-estimacions de baix a dalt fetes durant el disseny no són fiables i no s'han de
-fer servir per decidir.
+## What we do NOT know
+**What a use case of this project really costs.** There is no measurement. The
+bottom-up estimates made during the design are not reliable and must not be used
+to decide anything.
 
-Tampoc serveix d'àncora l'experiència del curs anterior: que calgués retallar
-abast és un fet, però **la magnitud del retall és una impressió de
-l'equip docent, no una mesura**. Construir-hi a sobre un càlcul d'hores donaria
-una precisió falsa.
+Nor does the experience of the previous course serve as an anchor: that scope had
+to be cut is a fact, but **the magnitude of the cut is an impression of the
+teaching team, not a measurement**. Building an hours calculation on top of it
+would give false precision.
 
-## Com resoldre-ho
-**Implementar el nivell N0 cronometrat** abans de la sessió 1. Dona una xifra
-d'hores per cas treta de dades pròpies i, de passada, verifica que l'entrada suau
-funciona. Fins llavors, qualsevol afirmació sobre si el projecte cap en 6 ECTS és
-una conjectura.
+## How to resolve it
+**Implement level N0, timed,** before session 1. It gives a figure of hours per
+use case drawn from our own data and, along the way, verifies that the gentle
+entry works. Until then, any claim about whether the project fits in 6 ECTS is a
+conjecture.
 
-## Pendent d'acordar
-Quin percentatge de l'assignatura és projecte i quin són teoria, exercicis i prova
-pràctica. És el supòsit més fràgil de tot el càlcul.
+## To be agreed
+What percentage of the course is project and what is theory, exercises and
+practical exam. It is the most fragile assumption of the whole calculation.
